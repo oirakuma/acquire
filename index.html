@@ -1,0 +1,53 @@
+<html>
+<head>
+<link rel="stylesheet" href="jquery.mobile-1.4.5.min.css">
+<meta name="viewport" content="width=device-width">
+<meta charset="UTF-8">
+<style>
+canvas {
+  background-color: black;
+}
+.break {
+  clear: left;
+}
+.char {
+  font-size: smaller;
+}
+.tile {
+  color: white;
+  background-color: black;
+  padding: 2px;
+  border: 1px outset gray;
+  float: left;
+  width: 32px;
+  text-align: center;
+  vertical-align: middle;
+}
+.player .tile {
+  color: white;
+  background-color: gray;
+  border: 2px outset gray;
+  float: left;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+  <div data-role="page" id="one">
+    <div class="content"></div>
+    <div class="ui"></div>
+    <button onclick="reset()">リセット</button>
+  </div>
+  <div data-role="page" id="two">
+  </div>
+</div>
+
+<script src="jquery.min.js"></script>
+<script src="jquery.mobile-1.4.5.min.js"></script>
+<script src="acquire.js"></script>
+</body>
+</html>
