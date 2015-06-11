@@ -9,7 +9,7 @@ function indexOfChar(c) {
 }
 
 function createArea(n, c) {
-  return '<div class="tile '+n+c+'">'+n+c+'</div>';
+  return '<td class="'+n+c+'">'+n+c+'</td>';
 //  return '<div class="tile '+n+c+'"></div>';
 }
 
@@ -25,42 +25,6 @@ function createTile(label) {
   return a;
 }
 
-function createHotel(color) {
-  var a = $('<a href="#" data-role="button" data-inline="true" style="background-color:'+color+'">'+color+'</a>');
-  a.click(function(){
-    selectedHotel = color;
-    $.mobile.changePage('#one', {transition: 'slide'});
-    setTimeout(function(){
-      afterSelectedHotelChain(color);
-    }, 500);
-  });
-  return a;
-}
-
-function playComputer(count) {
-  if (count > 3) return;
-  setTimeout(function() {
-    var tile = tiles.shift();
-    putTile(tile);
-    playComputer(count+1);
-  }, 1000);
-}
-
-/*function addTileToPlayer() {
-  var tile = tiles.shift();
-  var dst = $("."+tile);
-  console.log(dst);
-//  dst.css("background-color", "lightgray");
-  dst.text("◯").css("font-weight", "bold");
-  dst.click(function(e){
-    putTile(tile);
-    setTimeout(function(){
-      addTileToPlayer();
-      playComputer(1);
-    }, 500);
-  });
-}*/
-
 function getColor(name) {
   if (!name) return 'rgb(0, 0, 0)';
   return $(".content ."+name).css("background-color");
@@ -71,16 +35,18 @@ function setColor(name, color) {
 }
 
 function initialize() {
-  $(".content, .player").html("");
   tiles = [];
+  var table = $("<table></table>");
   for (var i = 0; i < 12; i++) {
+    var tr = $("<tr></tr>");
     for (var j = 0; j < 9; j++) {
       var tile = createArea(j+1, chars[i]);
-      $(".content").append(tile);
+      tr.append(tile);
       tiles.push((j+1)+chars[i]);
     }
-    $(".content").append('<div class="break"></div>');
+    table.append(tr);
   }
+  $(".content").append(table);
   tiles.sort(function(){
     return Math.random()-0.5;
   });
@@ -88,17 +54,17 @@ function initialize() {
     return Math.random()-0.5;
   });
  
-  for (var i = 0; i < 6; i++) {
-    $(".ui").append(createTile(tiles.shift()));
-  }
+  $(".ui a").click(function(){
+    var label = $(this).text();
+    var dst = $(".content ."+label);
+    dst.css("background-color", "gray");
+    checkChain(label);
+    $(this).text(tiles.shift());
+  });
 
-  $("#two").append(createHotel("red"));
-  $("#two").append(createHotel("purple"));
-  $("#two").append(createHotel("yellow"));
-  $("#two").append(createHotel("green"));
-  $("#two").append(createHotel("blue"));
-  $("#two").append(createHotel("lime"));
-  $("#two").append(createHotel("orange"));
+  $(".ui a").map(function(){
+    $(this).text(tiles.shift());
+  });
 }
 
 function getName(name, vx, vy) {
@@ -126,29 +92,41 @@ function selectHotelChain(callback) {
   }, 1000);
 }
 
+function showPage(name, callback) {
+  $(name+" a").click(function(){
+    var color = $(this).text();
+    setTimeout(function(){
+      callback(color);
+    }, 1000);
+  });
+  setTimeout(function(){
+    $.mobile.changePage(name, {transition: 'slide'});
+  }, 1000);
+}
+
 function checkChain(name) {
   var color1 = getColor(name);
   var color2 = null;
   if (color2 = isHotel(getName(name, +1, 0))) {
-    selectHotelChain(function(color){
+    showPage('#two', function(color){
       setColor(name, color);
       setColor(getName(name, +1, 0), color);
     });
   }
   if (color2 = isHotel(getName(name, -1, 0))) {
-    selectHotelChain(function(color){
+    showPage('#two', function(color){
       setColor(name, color);
       setColor(getName(name, -1, 0), color);
     });
   }
   if (color2 = isHotel(getName(name, 0, +1))) {
-    selectHotelChain(function(color){
+    showPage('#two', function(color){
       setColor(name, color);
       setColor(getName(name, 0, +1), color);
     });
   }
   if (color2 = isHotel(getName(name, 0, -1))) {
-    selectHotelChain(function(color){
+    showPage('#two', function(color){
       setColor(name, color);
       setColor(getName(name, 0, -1), color);
     });

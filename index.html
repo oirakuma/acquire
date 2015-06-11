@@ -4,24 +4,21 @@
 <meta name="viewport" content="width=device-width">
 <meta charset="UTF-8">
 <style>
-canvas {
-  background-color: black;
+h1 {
+  text-align: center;
 }
-.break {
-  clear: left;
+table {
+  width: 100%;
+  max-width: 400px;
 }
-.char {
-  font-size: smaller;
-}
-.tile {
-  color: white;
+td {
+  color: lightgray;
   background-color: black;
   padding: 2px;
-  border: 1px outset gray;
-  float: left;
-  width: 32px;
+  border: 1px solid gray;
   text-align: center;
   vertical-align: middle;
+  font-size: small;
 }
 .player .tile {
   color: white;
@@ -37,12 +34,36 @@ canvas {
 </head>
 <body>
 
+  <div data-role="page" id="top">
+    <h1>アクワイア</h1>
+    <a href="#one" class="ui-btn">ゲーム開始</a>
+    <a href="#setting" class="ui-btn">設定</a>
+  </div>
+
   <div data-role="page" id="one">
     <div class="content"></div>
-    <div class="ui"></div>
-    <button onclick="reset()">リセット</button>
+    <div class="ui">
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+    </div>
   </div>
+
   <div data-role="page" id="two">
+    <a href="#one" class="ui-btn" style="background-color:purple">purple</a>
+    <a href="#one" class="ui-btn" style="background-color:yellow">yellow</a>
+    <a href="#one" class="ui-btn" style="background-color:blue">blue</a>
+    <a href="#one" class="ui-btn" style="background-color:orange">orange</a>
+    <a href="#one" class="ui-btn" style="background-color:green">green</a>
+    <a href="#one" class="ui-btn" style="background-color:red">red</a>
+    <a href="#one" class="ui-btn" style="background-color:cyan">cyan</a>
+  </div>
+
+  <div data-role="page" id="setting">
+    <a href="#top" class="ui-btn">戻る</a>
   </div>
 </div>
 
