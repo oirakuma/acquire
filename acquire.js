@@ -1,3 +1,4 @@
+(function(global){
 var tiles = null;
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 var colors = ["purple","red","blue","yellow","cyan","green","orange"];
@@ -174,3 +175,4 @@ function checkChain(name) {
 $(document).ready(function(){
   initialize();
 });
+})(this.self);
