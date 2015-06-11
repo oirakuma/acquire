@@ -4,6 +4,10 @@
 <meta name="viewport" content="width=device-width">
 <meta charset="UTF-8">
 <style>
+.popup {
+  padding: 10px;
+  background-color: lightgray;
+}
 h1 {
   text-align: center;
 }
@@ -11,7 +15,10 @@ table {
   width: 100%;
   max-width: 400px;
 }
-td {
+#stocks td,th {
+  border: 1px solid gray;
+}
+.content td {
   color: lightgray;
   background-color: black;
   padding: 2px;
@@ -19,16 +26,6 @@ td {
   text-align: center;
   vertical-align: middle;
   font-size: small;
-}
-.player .tile {
-  color: white;
-  background-color: gray;
-  border: 2px outset gray;
-  float: left;
-  width: 48px;
-  height: 48px;
-  text-align: center;
-  vertical-align: middle;
 }
 </style>
 </head>
@@ -43,23 +40,31 @@ td {
   <div data-role="page" id="one">
     <div class="content"></div>
     <div class="ui">
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+      <a href="#stocks" class="ui-btn">株券</a>
     </div>
   </div>
 
   <div data-role="page" id="two">
-    <a href="#one" class="ui-btn" style="background-color:purple">purple</a>
     <a href="#one" class="ui-btn" style="background-color:yellow">yellow</a>
     <a href="#one" class="ui-btn" style="background-color:blue">blue</a>
     <a href="#one" class="ui-btn" style="background-color:orange">orange</a>
     <a href="#one" class="ui-btn" style="background-color:green">green</a>
     <a href="#one" class="ui-btn" style="background-color:red">red</a>
     <a href="#one" class="ui-btn" style="background-color:cyan">cyan</a>
+  </div>
+
+  <div data-role="page" id="stocks">
+    <div class="ui-content">
+    </div>
+    <div class="footer">
+      <a href="#one" class="ui-btn">戻る</a>
+    </div>
   </div>
 
   <div data-role="page" id="setting">

@@ -1,5 +1,8 @@
 var tiles = null;
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
+var colors = ["purple","red","blue","yellow","cyan","green","orange"];
+var chainMarkers = null;
+var players = null;
 
 function indexOfChar(c) {
   for (var i = 0; i < chars.length; i++)
@@ -10,7 +13,6 @@ function indexOfChar(c) {
 
 function createArea(n, c) {
   return '<td class="'+n+c+'">'+n+c+'</td>';
-//  return '<div class="tile '+n+c+'"></div>';
 }
 
 function createTile(label) {
@@ -34,14 +36,20 @@ function setColor(name, color) {
   return $(".content ."+name).css("background-color", color);
 }
 
+function Player() {
+  this.cash = 6000;
+  this.stocks = {};
+  for (var p in colors)
+    this.stocks[colors[p]] = 0;
+}
+
 function initialize() {
   tiles = [];
   var table = $("<table></table>");
   for (var i = 0; i < 12; i++) {
     var tr = $("<tr></tr>");
     for (var j = 0; j < 9; j++) {
-      var tile = createArea(j+1, chars[i]);
-      tr.append(tile);
+      tr.append(createArea(j+1, chars[i]));
       tiles.push((j+1)+chars[i]);
     }
     table.append(tr);
@@ -54,7 +62,7 @@ function initialize() {
     return Math.random()-0.5;
   });
  
-  $(".ui a").click(function(){
+  $(".ui .tile").click(function(){
     var label = $(this).text();
     var dst = $(".content ."+label);
     dst.css("background-color", "gray");
@@ -62,9 +70,33 @@ function initialize() {
     $(this).text(tiles.shift());
   });
 
-  $(".ui a").map(function(){
+  $(".ui .tile").map(function(){
     $(this).text(tiles.shift());
   });
+
+  chainMarkers = [];
+  for (var p in colors)
+    chainMarkers.push(colors[p]);
+
+  //player
+  players = [];
+  for (var i = 0; i < 4; i++)
+    players[i] = new Player();
+
+  var table = $("<table></table>");
+  var tr = $("<tr></tr>");
+  for (var p in colors)
+    tr.append('<th>'+colors[p]+'</th>');
+  table.append(tr);
+  for (var i = 0; i < 4; i++) {
+    tr = $("<tr></tr>");
+    for (var p in colors) {
+      var x = players[i].stocks[colors[p]];
+      tr.append('<td align="right">'+x+'</td>');
+    }
+    table.append(tr);
+  }
+  $("#stocks .ui-content").append(table);
 }
 
 function getName(name, vx, vy) {
@@ -78,58 +110,67 @@ function getName(name, vx, vy) {
 
 function isHotel(name) {
   var color = getColor(name);
-  if (color != 'rgb(0, 0, 0)' && color != 'rgb(211, 211, 211)')
-    return color;
-  return null;
+  console.log(color);
+  return color == 'rgb(128, 128, 128)';
 }
 
-var afterSelectedHotelChain = null;
+function isHotelChain(name) {
+  var color = getColor(name);
+  if (color != 'rgb(0, 0, 0)' && color != 'rgb(128, 128, 128)')
+    return color;
+  return false;
+}
+
+function isHotelMerged(name) {
+}
+
+function removeChainMarker(color) {
+  for (var i = 0; i < chainMarkers.length; i++) {
+    if (chainMarkers[i] == color) {
+      chainMarkers.splice(i, 1);
+      return;
+    }
+  }
+}
 
 function selectHotelChain(callback) {
-  afterSelectedHotelChain = callback;
+  var header = '<div data-role="header"><h2>Select the hotel chain</h2></div>';
+  var popup = '<div data-role="popup" class="popup" data-theme="none"></div>';
+  var body = $('<div></div>');
+  for (var p in chainMarkers) {
+    var a = $('<a href="#one" class="ui-btn"></a>').text(colors[p]);
+    a.css("background-color", colors[p]);
+    a.click(function(){
+      var color = $(this).text();
+      removeChainMarker(color);
+      setTimeout(function(){
+        callback(color);
+      }, 500);
+    });
+    body.append(a);
+  }
   setTimeout(function(){
-    $.mobile.changePage('#two', {transition: 'slide'});
-  }, 1000);
-}
-
-function showPage(name, callback) {
-  $(name+" a").click(function(){
-    var color = $(this).text();
-    setTimeout(function(){
-      callback(color);
-    }, 1000);
-  });
-  setTimeout(function(){
-    $.mobile.changePage(name, {transition: 'slide'});
-  }, 1000);
+    $(popup).append(header).append(body).popup().popup("open");
+  }, 500);
 }
 
 function checkChain(name) {
   var color1 = getColor(name);
   var color2 = null;
-  if (color2 = isHotel(getName(name, +1, 0))) {
-    showPage('#two', function(color){
-      setColor(name, color);
-      setColor(getName(name, +1, 0), color);
-    });
-  }
-  if (color2 = isHotel(getName(name, -1, 0))) {
-    showPage('#two', function(color){
-      setColor(name, color);
-      setColor(getName(name, -1, 0), color);
-    });
-  }
-  if (color2 = isHotel(getName(name, 0, +1))) {
-    showPage('#two', function(color){
-      setColor(name, color);
-      setColor(getName(name, 0, +1), color);
-    });
-  }
-  if (color2 = isHotel(getName(name, 0, -1))) {
-    showPage('#two', function(color){
-      setColor(name, color);
-      setColor(getName(name, 0, -1), color);
-    });
+  var vx = [1, -1, 0,  0];
+  var vy = [0,  0, 1, -1];
+
+  for (var i = 0; i < vx.length; i++) {
+    if (color2 = isHotelChain(getName(name, vx[i], vy[i]))) {
+      setColor(name, color2);
+    } else if (isHotel(getName(name, vx[i], vy[i]))) {
+      (function(i){
+        selectHotelChain(function(color){
+          setColor(name, color);
+          setColor(getName(name, vx[i], vy[i]), color);
+        });
+      })(i);
+    }
   }
 }
 
