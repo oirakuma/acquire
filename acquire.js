@@ -86,7 +86,7 @@ var black = 'rgb(0, 0, 0)';
     var colors = {};
     var color;
     for (var i = 0; i < 4; i++) {
-      if (color = isHotelChain(this.getName(name, vx[i], vy[i])))
+      if (color = this.isHotelChain(this.getName(name, vx[i], vy[i])))
         colors[color] = true;
     }
     var count = 0;
@@ -176,7 +176,13 @@ var black = 'rgb(0, 0, 0)';
       var label = $(this).text();
       var dst = $(".content ."+label);
       dst.css("background-color", "gray");
-      if (model.checkChain(label)) {
+      if (model.isHotelMerged(label)) {
+        console.log("Merged!");
+        selectMergedOption(model, function(color){
+          console.log(color);
+        });
+      }
+      else if (model.checkChain(label)) {
         selectHotelChain(model, function(color){
           model.setColor(label, color);
         });
@@ -187,6 +193,10 @@ var black = 'rgb(0, 0, 0)';
     $(".ui .tile").map(function(){
       $(this).text(model.tiles.shift());
     });
+  }
+
+  function selectMergedOption(model, callback) {
+    callback(null);
   }
   
   function selectHotelChain(model, callback) {
