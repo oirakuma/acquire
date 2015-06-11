@@ -21,11 +21,8 @@ table {
 .content td {
   color: lightgray;
   background-color: black;
-  padding: 2px;
-  border: 1px solid gray;
   text-align: center;
   vertical-align: middle;
-  font-size: small;
 }
 </style>
 </head>
@@ -40,23 +37,21 @@ table {
   <div data-role="page" id="one">
     <div class="content"></div>
     <div class="ui">
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini"></a>
+
+      <fieldset id="tiles"><legend>タイル</legend>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      </fieldset>
+
+      <div id="chain-markers">
+      </div>
+
       <a href="#stocks" class="ui-btn">株券</a>
     </div>
-  </div>
-
-  <div data-role="page" id="two">
-    <a href="#one" class="ui-btn" style="background-color:yellow">yellow</a>
-    <a href="#one" class="ui-btn" style="background-color:blue">blue</a>
-    <a href="#one" class="ui-btn" style="background-color:orange">orange</a>
-    <a href="#one" class="ui-btn" style="background-color:green">green</a>
-    <a href="#one" class="ui-btn" style="background-color:red">red</a>
-    <a href="#one" class="ui-btn" style="background-color:cyan">cyan</a>
   </div>
 
   <div data-role="page" id="stocks">

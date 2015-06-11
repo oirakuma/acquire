@@ -12,19 +12,7 @@ function indexOfChar(c) {
 }
 
 function createArea(n, c) {
-  return '<td class="'+n+c+'">'+n+c+'</td>';
-}
-
-function createTile(label) {
-  var a = $('<a href="#" data-role="button" data-inline="true">'+label+'</a>');
-  a.click(function(){
-    var label = $(this).text();
-    var dst = $(".content ."+label);
-    dst.css("background-color", "gray");
-    checkChain(label);
-    $(this).text(tiles.shift());
-  });
-  return a;
+  return $('<td></td>').text(n+c).addClass(n+c);
 }
 
 function getColor(name) {
@@ -44,21 +32,28 @@ function Player() {
 }
 
 function initialize() {
-  tiles = [];
-  var table = $("<table></table>");
-  for (var i = 0; i < 12; i++) {
-    var tr = $("<tr></tr>");
-    for (var j = 0; j < 9; j++) {
-      tr.append(createArea(j+1, chars[i]));
-      tiles.push((j+1)+chars[i]);
+  function createTable() {
+    var table = $("<table></table>").attr("cellspacing",1);
+    for (var i = 0; i < 12; i++) {
+      var tr = $("<tr></tr>");
+      for (var j = 0; j < 9; j++)
+        tr.append(createArea(j+1, chars[i]));
+      table.append(tr);
     }
-    table.append(tr);
+    return table;
   }
-  $(".content").append(table);
-  tiles.sort(function(){
-    return Math.random()-0.5;
-  });
-  tiles.sort(function(){
+
+  function createTiles() {
+    var ts = [];
+    for (var i = 0; i < 12; i++) {
+      for (var j = 0; j < 9; j++)
+        ts.push((j+1)+chars[i]);
+    }
+    return ts;
+  }
+
+  $(".content").append(createTable());
+  tiles = createTiles().sort(function(){
     return Math.random()-0.5;
   });
  
@@ -127,6 +122,7 @@ function isHotelMerged(name) {
 function removeChainMarker(color) {
   for (var i = 0; i < chainMarkers.length; i++) {
     if (chainMarkers[i] == color) {
+      console.log(i);
       chainMarkers.splice(i, 1);
       return;
     }
@@ -134,24 +130,24 @@ function removeChainMarker(color) {
 }
 
 function selectHotelChain(callback) {
-  var header = '<div data-role="header"><h2>Select the hotel chain</h2></div>';
-  var popup = '<div data-role="popup" class="popup" data-theme="none"></div>';
-  var body = $('<div></div>');
+  console.log("selectHotelChain()");
+  $("#tiles").hide();
+  $("#chain-markers").html("<fieldset><legend>チェーンマーカー</legend></fieldset>").show();
   for (var p in chainMarkers) {
-    var a = $('<a href="#one" class="ui-btn"></a>').text(colors[p]);
+    var a = $('<a href="#" class="ui-btn ui-btn-inline"></a>');
     a.css("background-color", colors[p]);
+    a.addClass(colors[p]);
     a.click(function(){
-      var color = $(this).text();
+      var color = $(this).attr("class").split(" ")[2];
       removeChainMarker(color);
+      $("#chain-markers").hide();
+      $("#tiles").show();
       setTimeout(function(){
         callback(color);
       }, 500);
     });
-    body.append(a);
+    $("#chain-markers").append(a);
   }
-  setTimeout(function(){
-    $(popup).append(header).append(body).popup().popup("open");
-  }, 500);
 }
 
 function checkChain(name) {
@@ -161,27 +157,20 @@ function checkChain(name) {
   var vy = [0,  0, 1, -1];
 
   for (var i = 0; i < vx.length; i++) {
-    if (color2 = isHotelChain(getName(name, vx[i], vy[i]))) {
-      setColor(name, color2);
-    } else if (isHotel(getName(name, vx[i], vy[i]))) {
-      (function(i){
+    (function(i){
+      if (color2 = isHotelChain(getName(name, vx[i], vy[i]))) {
+        setColor(name, color2);
+      } else if (isHotel(getName(name, vx[i], vy[i]))) {
+        console.log("isHotel");
         selectHotelChain(function(color){
           setColor(name, color);
           setColor(getName(name, vx[i], vy[i]), color);
         });
-      })(i);
-    }
+      }
+    })(i);
   }
-}
-
-function reset() {
-  initialize();
 }
 
 $(document).ready(function(){
   initialize();
-  $(document).page();
 });
-
-setTimeout(function(){
-}, 2000);
