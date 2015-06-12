@@ -13,7 +13,7 @@ var black = 'rgb(0, 0, 0)';
     for (var i = 0; i < 4; i++)
       this.players[i] = new Player();
     //tiles
-    this.tiles = shuffle(createTiles());
+    this.tiles = shuffle(shuffle(createTiles()));
     //chain markers
     this.chainMarkers = [];
     for (var p in colors)
@@ -132,11 +132,33 @@ var black = 'rgb(0, 0, 0)';
   
 })(this.self);
 
+//ComputerAI
+(function(global){
+  global.ComputerAI = ComputerAI;
+
+  function ComputerAI(model) {
+    this.model = model;
+  }
+
+  ComputerAI.prototype.play = function() {
+    var t = this.model.tiles.shift();
+    var dst = $(".content ."+t);
+    dst.css("background-color", "gray");
+    if (this.model.isHotelMerged(t)) {
+      console.log("Merged!");
+    } else if (this.model.checkChain(t)) {
+      this.model.setColor(t, "purple");
+    }
+  }
+})(this.self);
+
 //UI
 (function(global){
   global.render = render;
 
-  function render(model) {
+  var playedTile = null;
+
+  function render(model, ai) {
     function createArea(label) {
       return $('<td></td>').text(label).addClass(label);
     }
@@ -174,18 +196,28 @@ var black = 'rgb(0, 0, 0)';
 
     $(".ui .tile").click(function(){
       var label = $(this).text();
+      playedTile = label;
       var dst = $(".content ."+label);
       dst.css("background-color", "gray");
       if (model.isHotelMerged(label)) {
         console.log("Merged!");
         selectMergedOption(model, function(color){
           console.log(color);
+          setTimeout(function(){
+            ai.play();
+          }, 500);
         });
-      }
-      else if (model.checkChain(label)) {
+      } else if (model.checkChain(label)) {
         selectHotelChain(model, function(color){
           model.setColor(label, color);
+          setTimeout(function(){
+            ai.play();
+          }, 500);
         });
+      } else {
+        setTimeout(function(){
+          ai.play();
+        }, 500);
       }
       $(this).text(model.tiles.shift());
     });
@@ -212,9 +244,7 @@ var black = 'rgb(0, 0, 0)';
         model.removeChainMarker(color);
         $("#chain-markers").hide();
         $("#tiles").show();
-        setTimeout(function(){
-          callback(color);
-        }, 500);
+        callback(color);
       });
       $("#chain-markers").append(a);
     }
@@ -224,5 +254,6 @@ var black = 'rgb(0, 0, 0)';
 
 $(document).ready(function(){
   var acquire = new Acquire();
-  render(acquire);
+  var ai = new ComputerAI(acquire);
+  render(acquire, ai);
 });
