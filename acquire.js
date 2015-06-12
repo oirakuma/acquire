@@ -94,6 +94,21 @@ var black = 'rgb(0, 0, 0)';
       count += 1;
     return count >= 2;
   }
+
+  Acquire.prototype.getHotelChainSize = function(color) {
+    var tiles = $(".content td");
+    var a = tiles.filter(function(){
+      var style = $(this).attr("style");
+      if (style) {
+        var x = style.split(":")[1];
+        x = x.substr(1, x.length-2);
+        if (x == color)
+          return true;
+      }
+      return false;
+    });
+    return a.length;
+  }
   
   Acquire.prototype.removeChainMarker = function(color) {
     for (var i = 0; i < this.chainMarkers.length; i++) {
@@ -144,10 +159,23 @@ var black = 'rgb(0, 0, 0)';
     var t = this.model.tiles.shift();
     var dst = $(".content ."+t);
     dst.css("background-color", "gray");
+    $("#log").append('<div>played '+t+'</div>');
     if (this.model.isHotelMerged(t)) {
       console.log("Merged!");
+      var maxSize = null;
+      var maxColor = null;
+      for (var p in colors) {
+        var size = this.model.getHotelChainSize(colors[p]);
+        if (maxSize == null || size > maxSize) {
+          maxSize = size;
+          maxColor = p;
+        }
+        console.log(maxColor);
+      }
     } else if (this.model.checkChain(t)) {
-      this.model.setColor(t, "purple");
+      var color = this.model.chainMarkers.splice(0, 1);
+      this.model.setColor(t, color);
+      $("#log").append("<div>chain marker "+color+"</div>");
     }
   }
 })(this.self);
