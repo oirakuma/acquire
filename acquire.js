@@ -8,12 +8,16 @@ var black = 'rgb(0, 0, 0)';
   global.Acquire = Acquire;
 
   function Acquire() {
-    //players
-    this.players = [];
-    for (var i = 0; i < 4; i++)
-      this.players[i] = new Player();
     //tiles
     this.tiles = shuffle(shuffle(createTiles()));
+    //players
+    this.players = [];
+    for (var i = 0; i < 2; i++)
+      this.players[i] = new Player();
+    for (var i = 1; i < this.players.length; i++) {
+      for (var j = 0; j < 6; j++)
+        this.players[i].tiles.push(this.tiles.shift());
+    }
     //chain markers
     this.chainMarkers = [];
     for (var p in colors)
@@ -85,7 +89,7 @@ var black = 'rgb(0, 0, 0)';
 
     var colors = {};
     var color;
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < vx.length; i++) {
       if (color = this.isHotelChain(this.getName(name, vx[i], vy[i])))
         colors[color] = true;
     }
@@ -141,43 +145,11 @@ var black = 'rgb(0, 0, 0)';
   function Player() {
     this.cash = 6000;
     this.stocks = {};
+    this.tiles = [];
     for (var p in colors)
       this.stocks[colors[p]] = 0;
   }
   
-})(this.self);
-
-//ComputerAI
-(function(global){
-  global.ComputerAI = ComputerAI;
-
-  function ComputerAI(model) {
-    this.model = model;
-  }
-
-  ComputerAI.prototype.play = function() {
-    var t = this.model.tiles.shift();
-    var dst = $(".content ."+t);
-    dst.css("background-color", "gray");
-    $("#log").append('<div>played '+t+'</div>');
-    if (this.model.isHotelMerged(t)) {
-      console.log("Merged!");
-      var maxSize = null;
-      var maxColor = null;
-      for (var p in colors) {
-        var size = this.model.getHotelChainSize(colors[p]);
-        if (maxSize == null || size > maxSize) {
-          maxSize = size;
-          maxColor = p;
-        }
-        console.log(maxColor);
-      }
-    } else if (this.model.checkChain(t)) {
-      var color = this.model.chainMarkers.splice(0, 1);
-      this.model.setColor(t, color);
-      $("#log").append("<div>chain marker "+color+"</div>");
-    }
-  }
 })(this.self);
 
 //UI
@@ -208,7 +180,7 @@ var black = 'rgb(0, 0, 0)';
       for (var p in colors)
         tr.append('<th>'+colors[p]+'</th>');
       table.append(tr);
-      for (var i = 0; i < 4; i++) {
+      for (var i = 0; i < model.players.length; i++) {
         tr = $("<tr></tr>");
         for (var p in colors) {
           var x = model.players[i].stocks[colors[p]];
@@ -249,7 +221,7 @@ var black = 'rgb(0, 0, 0)';
       }
       $(this).text(model.tiles.shift());
     });
-  
+
     $(".ui .tile").map(function(){
       $(this).text(model.tiles.shift());
     });
@@ -258,11 +230,11 @@ var black = 'rgb(0, 0, 0)';
   function selectMergedOption(model, callback) {
     callback(null);
   }
-  
+
   function selectHotelChain(model, callback) {
     console.log("selectHotelChain()");
     $("#tiles").hide();
-    $("#chain-markers").html("<fieldset><legend>チェーンマーカー</legend></fieldset>").show();
+    $("#chain-markers").html("<fieldset><legend>Select a Chain Marker</legend></fieldset>").show();
     for (var p in model.chainMarkers) {
       var a = $('<a href="#" class="ui-btn ui-btn-inline"></a>');
       a.css("background-color", colors[p]);

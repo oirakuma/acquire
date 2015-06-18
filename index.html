@@ -18,8 +18,11 @@ table {
 #stocks td,th {
   border: 1px solid gray;
 }
+#log {
+  overflow-y: scroll;
+  height: 4em;
+}
 .content td {
-  font-size: small;
   color: lightgray;
   background-color: black;
   text-align: center;
@@ -30,22 +33,22 @@ table {
 <body>
 
   <div data-role="page" id="top">
-    <h1>アクワイア</h1>
-    <a href="#one" class="ui-btn">ゲーム開始</a>
-    <a href="#setting" class="ui-btn">設定</a>
+    <h1>Acquire</h1>
+    <a href="#one" class="ui-btn">Game Start</a>
+    <a href="#setting" class="ui-btn">Setting</a>
   </div>
 
   <div data-role="page" id="one">
     <div class="content"></div>
     <div class="ui">
 
-      <fieldset id="tiles"><legend>タイル</legend>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-btn-b"></a>
+      <fieldset id="tiles"><legend>Your Tiles</legend>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
+      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
       </fieldset>
 
       <div id="chain-markers">
@@ -54,7 +57,7 @@ table {
       <div id="log">
       </div>
 
-      <a href="#stocks" class="ui-btn">株券</a>
+      <a href="#stocks" class="ui-btn">Stocks</a>
     </div>
   </div>
 
@@ -62,17 +65,18 @@ table {
     <div class="ui-content">
     </div>
     <div class="footer">
-      <a href="#one" class="ui-btn">戻る</a>
+      <a href="#one" class="ui-btn">Back</a>
     </div>
   </div>
 
   <div data-role="page" id="setting">
-    <a href="#top" class="ui-btn">戻る</a>
+    <a href="#top" class="ui-btn">Back</a>
   </div>
 </div>
 
 <script src="jquery.min.js"></script>
 <script src="jquery.mobile-1.4.5.min.js"></script>
+<script src="ai.js"></script>
 <script src="acquire.js"></script>
 </body>
 </html>
