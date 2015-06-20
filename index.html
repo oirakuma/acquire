@@ -23,10 +23,13 @@ table {
   height: 4em;
 }
 .content td {
-  color: lightgray;
-  background-color: black;
+  color: gray;
+  background-color: lightgray;
+  border: 1px outset lightgray;
   text-align: center;
   vertical-align: middle;
+}
+.chain-marker {
 }
 </style>
 </head>
@@ -41,32 +44,21 @@ table {
   <div data-role="page" id="one">
     <div class="content"></div>
     <div class="ui">
-
-      <fieldset id="tiles"><legend>Your Tiles</legend>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      <a href="#" class="tile ui-btn ui-btn-inline ui-mini ui-shadow"></a>
-      </fieldset>
-
       <div id="chain-markers">
       </div>
 
       <div id="log">
       </div>
-
       <a href="#stocks" class="ui-btn">Stocks</a>
     </div>
   </div>
 
-  <div data-role="page" id="stocks">
-    <div class="ui-content">
+  <div data-role="page" id="two">
+<!--    <div class="ui-content">
     </div>
     <div class="footer">
       <a href="#one" class="ui-btn">Back</a>
-    </div>
+    </div>-->
   </div>
 
   <div data-role="page" id="setting">

@@ -1,7 +1,8 @@
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 var colors = ["purple","red","blue","yellow","cyan","green","orange"];
 var gray = 'rgb(128, 128, 128)';
-var black = 'rgb(0, 0, 0)';
+var lightgray = 'rgb(211, 211, 211)';
+var orange = 'rgb(255, 165, 0)';
 
 //model
 (function(global){
@@ -40,7 +41,7 @@ var black = 'rgb(0, 0, 0)';
   }
   
   Acquire.prototype.getColor = function(name) {
-    if (!name) return black;
+    if (!name) return lightgray;
     return $(".content ."+name).css("background-color");
   }
   
@@ -78,9 +79,8 @@ var black = 'rgb(0, 0, 0)';
 
   Acquire.prototype.isHotelChain = function(name) {
     var color = this.getColor(name);
-    if (color != black && color != gray)
-      return color;
-    return false;
+    if (color == lightgray || color == gray) return false;
+    return color;
   }
   
   Acquire.prototype.isHotelMerged = function(name) {
@@ -131,10 +131,13 @@ var black = 'rgb(0, 0, 0)';
     var vx = [1, -1, 0,  0];
     var vy = [0,  0, 1, -1];
   
+    //4方向にホテルかホテルチェーンがあるかどうか調べる
+    //ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
     for (var i = 0; i < vx.length; i++) {
-      if (color2 = self.isHotelChain(self.getName(name, vx[i], vy[i]))) {
+      var name2 = self.getName(name, vx[i], vy[i]);
+      if (color2 = self.isHotelChain(name2)) {
         self.setColor(name, color2);
-      } else if (self.isHotel(self.getName(name, vx[i], vy[i]))) {
+      } else if (self.isHotel(name2)) {
         console.log("isHotel");
         return true;
       }
@@ -158,98 +161,109 @@ var black = 'rgb(0, 0, 0)';
 
   var playedTile = null;
 
+  function redirectTo(path) {
+    var a = $('<a></a>');
+    a.attr("href", path);
+    $("#two").append(a);
+    a.click();
+  }
+
+  function createButton() {
+    var a = $('<a></a>').addClass("ui-btn").addClass("ui-btn-inline");
+    return a;
+  }
+
   function render(model, ai) {
-    function createArea(label) {
-      return $('<td></td>').text(label).addClass(label);
-    }
-  
-    function renderBoard() {
-      var table = $("<table></table>").attr("cellspacing",1);
-      for (var i = 0; i < 12; i++) {
-        var tr = $("<tr></tr>");
-        for (var j = 0; j < 9; j++)
-          tr.append(createArea((j+1)+chars[i]));
-        table.append(tr);
-      }
-      $(".content").append(table);
-    }
-  
-    function renderStocks() {
-      var table = $("<table></table>");
-      var tr = $("<tr></tr>");
+    function renderStockTable() {
+      var table = $('<table></table>').attr("cellspacing",1);
+      var tr = $("<tr><th></th></tr>");
       for (var p in colors)
         tr.append('<th>'+colors[p]+'</th>');
       table.append(tr);
       for (var i = 0; i < model.players.length; i++) {
         tr = $("<tr></tr>");
+        tr.append('<td>'+i+'</td>');
         for (var p in colors) {
           var x = model.players[i].stocks[colors[p]];
-          tr.append('<td align="right">'+x+'</td>');
+          tr.append($('<td>'+x+'</td>').attr("align","right"));
         }
         table.append(tr);
       }
-      $("#stocks .ui-content").append(table);
+      return table;
     }
-  
-    renderBoard();
-    renderStocks(model);
 
-    $(".ui .tile").click(function(){
-      var label = $(this).text();
-      playedTile = label;
-      var dst = $(".content ."+label);
-      dst.css("background-color", "gray");
-      if (model.isHotelMerged(label)) {
-        console.log("Merged!");
-        selectMergedOption(model, function(color){
-          console.log(color);
-          setTimeout(function(){
-            ai.play();
-          }, 500);
+    function renderTiles() {
+      function createTile(label) {
+        var td = $('<td></td>').text(label).addClass(label);
+        td.click(function(){
+          if ($(this).css("color") != orange) return;
+          var name = $(this).text();
+          playedTile = name;
+          $(this).css("background-color", "gray");
+          $(this).css("border", "1px outset gray");
+          $(this).text("");
+          if (model.isHotelMerged(name)) {
+            console.log("Merge!");
+            renderMergedOption(model);
+          } else if (model.checkChain(name)) {
+            renderSelectChain(name);
+          } else {
+            setTimeout(function(){
+              ai.play();
+            }, 500);
+          }
+          var name = model.tiles.shift();
+          $("."+name).css("color", "orange").css("font-weight", "bold");
         });
-      } else if (model.checkChain(label)) {
-        selectHotelChain(model, function(color){
-          model.setColor(label, color);
-          setTimeout(function(){
-            ai.play();
-          }, 500);
-        });
-      } else {
-        setTimeout(function(){
-          ai.play();
-        }, 500);
+        return td;
       }
-      $(this).text(model.tiles.shift());
-    });
+  
+      var table = $("<table></table>").attr("cellspacing",1);
+      for (var i = 0; i < 12; i++) {
+        var tr = $("<tr></tr>");
+        for (var j = 0; j < 9; j++)
+          tr.append(createTile((j+1)+chars[i]));
+        table.append(tr);
+      }
+      $(".content").append(table);
+    }
 
-    $(".ui .tile").map(function(){
-      $(this).text(model.tiles.shift());
-    });
-  }
+    function renderSelectChain(name) {
+      var table = renderStockTable();
+      $("#two").html(table);
+  
+      for (var p in colors) {
+        var a = createButton().css("background-color",colors[p]);
+        (function(color){
+          a.click(function(){
+            model.setColor(name, color);
+            setTimeout(function(){
+              redirectTo("#one");
+              ai.play();
+            }, 500);
+          });
+        })(colors[p]);
+        $("#two").append(a);
+      }
+      redirectTo("#two");
+    }
 
-  function selectMergedOption(model, callback) {
-    callback(null);
-  }
+    function renderMergedOption(model) {
+      var table = renderStockTable();
+      $("#two").html(table);
+      var a = createButton().text("Sell");
+      $("#two").append(a);
+      var a = createButton().text("Trade");
+      $("#two").append(a);
+      redirectTo("#two");
+    }
 
-  function selectHotelChain(model, callback) {
-    console.log("selectHotelChain()");
-    $("#tiles").hide();
-    $("#chain-markers").html("<fieldset><legend>Select a Chain Marker</legend></fieldset>").show();
-    for (var p in model.chainMarkers) {
-      var a = $('<a href="#" class="ui-btn ui-btn-inline"></a>');
-      a.css("background-color", colors[p]);
-      a.addClass(colors[p]);
-      a.click(function(){
-        var color = $(this).attr("class").split(" ")[2];
-        model.removeChainMarker(color);
-        $("#chain-markers").hide();
-        $("#tiles").show();
-        callback(color);
-      });
-      $("#chain-markers").append(a);
+    renderTiles();
+    for (var i = 0; i < 6; i++) {
+      var name = model.tiles.shift();
+      $("."+name).css("color", "orange").css("font-weight", "bold");
     }
   }
-  
 })(this.self);
 
 $(document).ready(function(){
