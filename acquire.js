@@ -20,9 +20,9 @@ var orange = 'rgb(255, 165, 0)';
         this.players[i].tiles.push(this.tiles.shift());
     }
     //chain markers
-    this.chainMarkers = [];
+    this.chainMarkers = {};
     for (var p in colors)
-      this.chainMarkers.push(colors[p]);
+      this.chainMarkers[colors[p]] = false;
   }
 
   function createTiles() {
@@ -38,6 +38,42 @@ var orange = 'rgb(255, 165, 0)';
     return a.sort(function(){
       return Math.random()-0.5;
     });
+  }
+
+  Acquire.prototype.price = function(color) {
+    var size = this.getHotelChainSize(color)
+    console.log(size);
+    if (color == "red" || color == "yellow") {
+      if (size == 2) return 200;
+      else if (size == 3) return 300;
+      else if (size == 4) return 400;
+      else if (size == 5) return 500;
+      else if (size <= 10) return 600;
+      else if (size <= 20) return 700;
+      else if (size <= 30) return 800;
+      else if (size <= 40) return 900;
+      else return 1000;
+    } else if (color == "orange" || color == "green" || color == "blue") {
+      if (size == 2) return 300;
+      else if (size == 3) return 400;
+      else if (size == 4) return 500;
+      else if (size == 5) return 600;
+      else if (size <= 10) return 700;
+      else if (size <= 20) return 800;
+      else if (size <= 30) return 900;
+      else if (size <= 40) return 1000;
+      else return 1100;
+    } else if (color == "purple" || color == "cyan") {
+      if (size == 2) return 400;
+      else if (size == 3) return 500;
+      else if (size == 4) return 600;
+      else if (size == 5) return 700;
+      else if (size <= 10) return 800;
+      else if (size <= 20) return 900;
+      else if (size <= 30) return 1000;
+      else if (size <= 40) return 1100;
+      else return 1200;
+    }
   }
   
   Acquire.prototype.getColor = function(name) {
@@ -100,28 +136,27 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.getHotelChainSize = function(color) {
+    function parseStyle(style) {
+      var ss = style.split(";");
+      var h = {};
+      for (var i = 0; i < ss.length-1; i++) {
+        var xx = ss[i].split(":");
+        h[xx[0].trim()] = xx[1].trim();
+      }
+      return h;
+    }
+    
     var tiles = $(".content td");
     var a = tiles.filter(function(){
       var style = $(this).attr("style");
       if (style) {
-        var x = style.split(":")[1];
-        x = x.substr(1, x.length-2);
-        if (x == color)
+        var h = parseStyle(style);
+        if (h["background-color"] == color)
           return true;
       }
       return false;
     });
     return a.length;
-  }
-  
-  Acquire.prototype.removeChainMarker = function(color) {
-    for (var i = 0; i < this.chainMarkers.length; i++) {
-      if (this.chainMarkers[i] == color) {
-        console.log(i);
-        this.chainMarkers.splice(i, 1);
-        return;
-      }
-    }
   }
   
   Acquire.prototype.checkChain = function(name) {
@@ -144,7 +179,20 @@ var orange = 'rgb(255, 165, 0)';
     }
     return false;
   }
-  
+
+  Acquire.prototype.chained = function() {
+    for (var p in this.chainMarkers) {
+      if (this.chainMarkers[p])
+        return true;
+    }
+    return false;
+  }
+
+  Acquire.prototype.purchaseStock = function(x, color) {
+    this.players[x].stocks[color] += 1;
+    this.players[x].cash -= this.price(color);
+  }
+
   function Player() {
     this.cash = 6000;
     this.stocks = {};
@@ -176,13 +224,14 @@ var orange = 'rgb(255, 165, 0)';
   function render(model, ai) {
     function renderStockTable() {
       var table = $('<table></table>').attr("cellspacing",1);
-      var tr = $("<tr><th></th></tr>");
+      var tr = $("<tr><th></th><th>Cash</th></tr>");
       for (var p in colors)
         tr.append('<th>'+colors[p]+'</th>');
       table.append(tr);
       for (var i = 0; i < model.players.length; i++) {
         tr = $("<tr></tr>");
         tr.append('<td>'+i+'</td>');
+        tr.append('<td>'+model.players[i].cash+'</td>');
         for (var p in colors) {
           var x = model.players[i].stocks[colors[p]];
           tr.append($('<td>'+x+'</td>').attr("align","right"));
@@ -208,9 +257,8 @@ var orange = 'rgb(255, 165, 0)';
           } else if (model.checkChain(name)) {
             renderSelectChain(name);
           } else {
-            setTimeout(function(){
-              ai.play();
-            }, 500);
+            if (model.chained())
+              renderPurchaseStocks();
           }
           var name = model.tiles.shift();
           $("."+name).css("color", "orange").css("font-weight", "bold");
@@ -228,21 +276,48 @@ var orange = 'rgb(255, 165, 0)';
       $(".content").append(table);
     }
 
+    function createChainMarker(color) {
+      var a = createButton().css("background-color",color);
+      a.click(function(){
+        model.purchaseStock(0, color);
+        $("#stocks").html(renderStockTable());
+      });
+      return a;
+    }
+
+    function renderPurchaseStocks() {
+      var table = renderStockTable();
+      $("#two").html($('<div id="stocks"></div>').append(table));
+
+      for (var p in model.chainMarkers) {
+        if (model.chainMarkers[p])
+          $("#two").append(createChainMarker(p));
+      }
+      var a = createButton().text("Done");
+      a.click(function(){
+        redirectTo("#one");
+      });
+      $("#two").append(a);
+      redirectTo("#two");
+    }
+
     function renderSelectChain(name) {
       var table = renderStockTable();
       $("#two").html(table);
   
-      for (var p in colors) {
-        var a = createButton().css("background-color",colors[p]);
+      for (var p in model.chainMarkers) {
+        if (model.chainMarkers[p]) continue;
+        var a = createButton().css("background-color", p);
         (function(color){
           a.click(function(){
             model.setColor(name, color);
+            model.chainMarkers[color] = true;
             setTimeout(function(){
               redirectTo("#one");
               ai.play();
             }, 500);
           });
-        })(colors[p]);
+        })(p);
         $("#two").append(a);
       }
       redirectTo("#two");
