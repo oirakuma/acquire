@@ -30,11 +30,12 @@
       }
     } else if (this.model.checkChain(t)) {
       for (var color in this.model.chainMarkers) {
-        if (!this.model.chainMarkers[p])
+        if (!this.model.chainMarkers[color])
           break;
       }
       this.model.setColor(t, color);
-      $("#log").append("<div>Computer put "+color+" chain marker on "+t+".</div>");
+      this.model.chainMarkers[color] = true;
+      logView.append("Computer put "+color+" chain marker on "+t+".");
     }
     var t = this.model.tiles.shift();
     this.model.players[1].tiles.push(t);

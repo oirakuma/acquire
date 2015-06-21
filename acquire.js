@@ -1,6 +1,7 @@
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 var colors = ["purple","red","blue","yellow","cyan","green","orange"];
-var gray = 'rgb(128, 128, 128)';
+//var gray = 'rgb(128, 128, 128)';
+var gray = 'gray';
 var lightgray = 'rgb(211, 211, 211)';
 var orange = 'rgb(255, 165, 0)';
 
@@ -78,7 +79,12 @@ var orange = 'rgb(255, 165, 0)';
   
   Acquire.prototype.getColor = function(name) {
     if (!name) return lightgray;
-    return $("#tiles ."+name).css("background-color");
+    var style = $("#tiles ."+name).attr("style");
+    if (style) {
+      var h = parseStyle(style);
+      return h["background-color"];
+    }
+    return null;
   }
   
   //隣接するホテルの色も変更する
@@ -125,24 +131,69 @@ var orange = 'rgb(255, 165, 0)';
     if (color == lightgray || color == gray) return false;
     return color;
   }
-  
+
+  function sortHashByValue(h) {
+    var a = [];
+    for (var p in h)
+      a.push([p, h[p]]);
+    return a.sort(function(x, y){
+      if (x[1] < y[1]) return 1;
+      return -1;
+    });
+  }
+
   Acquire.prototype.isHotelMerged = function(name) {
     var vx = [1, -1, 0,  0];
     var vy = [0,  0, 1, -1];
 
     var colors = {};
     var color;
+    //4方向のホテルチェーンの色を数える。
     for (var i = 0; i < vx.length; i++) {
       if (color = this.isHotelChain(this.getName(name, vx[i], vy[i])))
-        colors[color] = true;
+        colors[color] = 0;
     }
     var count = 0;
     for (var p in colors)
       count += 1;
+    if (count >= 2) {
+      for (var p in colors)
+        colors[p] = this.getHotelChainSize(p);
+      var a = sortHashByValue(colors);
+      //[["yellow", 7], ["red", 5], ["blue", 3]]
+      console.log(a);
+      this.name = name;
+      this.merger = a[0][0];
+      this.merged = a[1][0];
+    }
     return count >= 2;
   }
 
-  Acquire.prototype.getHotelChainSize = function(color) {
+  Acquire.prototype.merge = function() {
+    var self = this;
+    //吸収されるホテルのタイルを吸収するホテルの色に変更する
+    $("#tiles td").map(function(){
+      var style = $(this).attr("style");
+      if (style) {
+        var h = parseStyle(style);
+        if (h["background-color"] == self.merged)
+          $(this).css("background-color", self.merger);
+      }
+    });
+    //さっき置いたタイルの色を変更する。
+    $("#tiles ."+self.name).css("background-color", self.merger);
+    //チェーンマーカーを返す。
+    self.chainMarkers[self.merged] = false;
+  }
+  
+  Acquire.prototype.checkChain = function(name) {
+    var self = this;
+    var color1 = this.getColor(name);
+    var color2 = null;
+    var vx = [1, -1, 0,  0];
+    var vy = [0,  0, 1, -1];
+  }
+
     function parseStyle(style) {
       var ss = style.split(";");
       var h = {};
@@ -153,6 +204,7 @@ var orange = 'rgb(255, 165, 0)';
       return h;
     }
     
+  Acquire.prototype.getHotelChainSize = function(color) {
     var tiles = $("#tiles td");
     var a = tiles.filter(function(){
       var style = $(this).attr("style");
@@ -200,6 +252,12 @@ var orange = 'rgb(255, 165, 0)';
     this.players[x].cash -= this.price(color);
   }
 
+  Acquire.prototype.buildChain = function(name, color) {
+    this.setColor(name, color);
+    this.chainMarkers[color] = true;
+    this.players[0].stocks[color] += 1;
+  }
+
   function Player() {
     this.cash = 6000;
     this.stocks = {};
@@ -216,7 +274,7 @@ var logView = new LogView("#log");
 $(document).ready(function(){
   var acquire = new Acquire();
   ai = new ComputerAI(acquire);
-  stockTableView = new StockTableView({model:acquire,id:"#two"});
+  stockTableView = new StockTableView({model:acquire,id:"#stocks"});
   stockTableView.render();
   var tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();

@@ -12,15 +12,21 @@
     function createTile(label) {
       var td = $('<td></td>').text(label).addClass(label);
       td.click(function(){
-        if ($(this).css("color") != orange) return;
+        //コメントアウトするとどこでもタイルを置ける
+//        if ($(this).css("color") != orange) return;
         var name = $(this).text();
         playedTile = name;
         self.model.putTile(name);
         if (self.model.isHotelMerged(name)) {
           console.log("Merge!");
-          renderMergedOption(self.model);
+          var view = new MergedView({model:self.model,el:"#merged"});
+          view.render();
         } else if (self.model.checkChain(name)) {
-          var view = new ChainMarkersView({model:self.model,id:"#chain-markers",name:name});
+          var view = new ChainMarkersView({
+            model:self.model,
+            el:"#chain-markers",
+            name:name
+          });
           view.render();
         } else {
           if (self.model.chained())

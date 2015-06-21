@@ -8,7 +8,7 @@
   function redirectTo(path) {
     var a = $('<a></a>');
     a.attr("href", path);
-    $("#two").append(a);
+    $("#stocks").append(a);
     a.click();
   }
 
@@ -20,7 +20,6 @@
   function render(model, ai) {
     for (var i = 0; i < 6; i++) {
       var name = model.players[0].tiles[i];
-      console.log(name);
       $("."+name).css("color", "orange").css("font-weight", "bold");
     }
   }

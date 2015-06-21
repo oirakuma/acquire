@@ -18,7 +18,7 @@
       tr.append('<td>'+this.model.players[i].cash+'</td>');
       for (var p in colors) {
         var x = this.model.players[i].stocks[colors[p]];
-        tr.append($('<td>'+x+'</td>').attr("align","right"));
+        tr.append($('<td>'+x+'</td>'));
       }
       table.append(tr);
     }

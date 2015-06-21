@@ -9,10 +9,7 @@ h1 {
 }
 table {
   width: 100%;
-  max-width: 400px;
-}
-#two td,th {
-  border: 1px solid gray;
+  max-width: 600px;
 }
 #log {
   overflow-y: scroll;
@@ -24,8 +21,13 @@ table {
   border: 1px outset lightgray;
   text-align: center;
   vertical-align: middle;
+  font-size: small;
 }
-.chain-marker {
+#stocks td {
+  text-align: right;
+}
+#stocks td,th {
+  border: 1px solid gray;
 }
 </style>
 </head>
@@ -39,9 +41,10 @@ table {
 
   <div data-role="page" id="one">
     <div id="tiles"></div>
-    <div id="two"></div>
+    <div id="stocks"></div>
     <div id="chain-markers"></div>
     <div id="purchase"></div>
+    <div id="merged"></div>
     <div id="log"></div>
   </div>
 
