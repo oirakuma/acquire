@@ -18,6 +18,7 @@
       return a;
     }
 
+    $(self.el).append('<p>Purchase stocks.</p>');
     for (var p in this.model.chainMarkers) {
       if (this.model.chainMarkers[p])
         $(self.el).append(createChainMarker(p));

@@ -4,10 +4,6 @@
 <meta name="viewport" content="width=device-width">
 <meta charset="UTF-8">
 <style>
-.popup {
-  padding: 10px;
-  background-color: lightgray;
-}
 h1 {
   text-align: center;
 }
@@ -15,14 +11,14 @@ table {
   width: 100%;
   max-width: 400px;
 }
-#stocks td,th {
+#two td,th {
   border: 1px solid gray;
 }
 #log {
   overflow-y: scroll;
   height: 4em;
 }
-.content td {
+#tiles td {
   color: gray;
   background-color: lightgray;
   border: 1px outset lightgray;
@@ -42,8 +38,7 @@ table {
   </div>
 
   <div data-role="page" id="one">
-    <div class="content"></div>
-    <div class="ui"></div>
+    <div id="tiles"></div>
     <div id="two"></div>
     <div id="chain-markers"></div>
     <div id="purchase"></div>

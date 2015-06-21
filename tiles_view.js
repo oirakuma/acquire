@@ -25,6 +25,8 @@
         } else {
           if (self.model.chained())
             purchaseView.render();
+          else
+            ai.play(1);
         }
         var name = self.model.tiles.shift();
         $("."+name).css("color", "orange").css("font-weight", "bold");

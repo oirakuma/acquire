@@ -78,13 +78,13 @@ var orange = 'rgb(255, 165, 0)';
   
   Acquire.prototype.getColor = function(name) {
     if (!name) return lightgray;
-    return $(".content ."+name).css("background-color");
+    return $("#tiles ."+name).css("background-color");
   }
   
   //隣接するホテルの色も変更する
   Acquire.prototype.setColor = function(name, color) {
     if (this.getColor(name) == gray) {
-      $(".content ."+name).css("background-color", color);
+      $("#tiles ."+name).css("background-color", color);
       this.setColor(this.getName(name,  1, 0), color);
       this.setColor(this.getName(name, -1, 0), color);
       this.setColor(this.getName(name, 0,  1), color);
@@ -93,7 +93,7 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.putTile = function(name) {
-    var div = $(".content ."+name);
+    var div = $("#tiles ."+name);
     div.css("background-color", "gray");
     div.css("border", "1px outset gray");
     div.text("");
@@ -153,7 +153,7 @@ var orange = 'rgb(255, 165, 0)';
       return h;
     }
     
-    var tiles = $(".content td");
+    var tiles = $("#tiles td");
     var a = tiles.filter(function(){
       var style = $(this).attr("style");
       if (style) {
@@ -218,7 +218,7 @@ $(document).ready(function(){
   ai = new ComputerAI(acquire);
   stockTableView = new StockTableView({model:acquire,id:"#two"});
   stockTableView.render();
-  var tilesView = new TilesView({model:acquire,id:".content"});
+  var tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
   purchaseView = new PurchaseView({model:acquire, el:"#purchase"});
   render(acquire, ai);

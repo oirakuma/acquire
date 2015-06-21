@@ -12,7 +12,7 @@
     return board2;
   }
 
-  ComputerAI.prototype.play = function(x) {
+  ComputerAI.prototype.play = function(id) {
     var t = this.model.players[1].tiles.shift();
     this.model.putTile(t);
     logView.append('Computer played '+t+'.');
@@ -29,11 +29,20 @@
         console.log(maxColor);
       }
     } else if (this.model.checkChain(t)) {
-      var color = this.model.chainMarkers.splice(0, 1);
+      for (var color in this.model.chainMarkers) {
+        if (!this.model.chainMarkers[p])
+          break;
+      }
       this.model.setColor(t, color);
       $("#log").append("<div>Computer put "+color+" chain marker on "+t+".</div>");
     }
     var t = this.model.tiles.shift();
     this.model.players[1].tiles.push(t);
+
+    if (id < 4-1) {
+      setTimeout(function(){
+        ai.play(id+1);
+      }, 500);
+    }
   }
 })(this.self);
