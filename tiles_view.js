@@ -15,10 +15,8 @@
         //コメントアウトするとどこでもタイルを置ける
 //        if ($(this).css("color") != orange) return;
         var name = $(this).text();
-        playedTile = name;
         self.model.putTile(name);
         if (self.model.isHotelMerged(name)) {
-          console.log("Merge!");
           var view = new MergedView({model:self.model,el:"#merged"});
           view.render();
         } else if (self.model.checkChain(name)) {

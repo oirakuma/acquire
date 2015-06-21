@@ -3,8 +3,6 @@
   global.createButton = createButton;
   global.redirectTo = redirectTo;
 
-  var playedTile = null;
-
   function redirectTo(path) {
     var a = $('<a></a>');
     a.attr("href", path);
