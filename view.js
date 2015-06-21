@@ -19,7 +19,8 @@
 
   function render(model, ai) {
     for (var i = 0; i < 6; i++) {
-      var name = model.tiles.shift();
+      var name = model.players[0].tiles[i];
+      console.log(name);
       $("."+name).css("color", "orange").css("font-weight", "bold");
     }
   }

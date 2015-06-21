@@ -13,9 +13,9 @@ var orange = 'rgb(255, 165, 0)';
     this.tiles = shuffle(shuffle(createTiles()));
     //players
     this.players = [];
-    for (var i = 0; i < 2; i++)
+    for (var i = 0; i < 4; i++)
       this.players[i] = new Player();
-    for (var i = 1; i < this.players.length; i++) {
+    for (var i = 0; i < this.players.length; i++) {
       for (var j = 0; j < 6; j++)
         this.players[i].tiles.push(this.tiles.shift());
     }
@@ -90,6 +90,13 @@ var orange = 'rgb(255, 165, 0)';
       this.setColor(this.getName(name, 0,  1), color);
       this.setColor(this.getName(name, 0, -1), color);
     }
+  }
+
+  Acquire.prototype.putTile = function(name) {
+    var div = $(".content ."+name);
+    div.css("background-color", "gray");
+    div.css("border", "1px outset gray");
+    div.text("");
   }
 
   function indexOfChar(c) {
@@ -200,14 +207,15 @@ var orange = 'rgb(255, 165, 0)';
     for (var p in colors)
       this.stocks[colors[p]] = 0;
   }
-  
 })(this.self);
 
 var stockTableView = null;
 var purchaseView = null;
+var ai = null;
+var logView = new LogView("#log");
 $(document).ready(function(){
   var acquire = new Acquire();
-  var ai = new ComputerAI(acquire);
+  ai = new ComputerAI(acquire);
   stockTableView = new StockTableView({model:acquire,id:"#two"});
   stockTableView.render();
   var tilesView = new TilesView({model:acquire,id:".content"});

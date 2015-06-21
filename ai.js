@@ -12,16 +12,10 @@
     return board2;
   }
 
-  ComputerAI.prototype.play = function() {
-    var board = $(".content td").map(function(){
-      return $(this).css("background-color");
-    });
-    console.log(this.model.players[1].tiles);
+  ComputerAI.prototype.play = function(x) {
     var t = this.model.players[1].tiles.shift();
-
-    var dst = $(".content ."+t);
-    dst.css("background-color", "gray");
-    $("#log").append('<div>Computer played '+t+'.</div>');
+    this.model.putTile(t);
+    logView.append('Computer played '+t+'.');
     if (this.model.isHotelMerged(t)) {
       console.log("Merged!");
       var maxSize = null;

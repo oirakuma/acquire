@@ -8,6 +8,7 @@
 
   ChainMarkersView.prototype.render = function() {
     var self = this;
+    $(self.id).append('<div>Select a chain marker.</div>');
     for (var p in self.model.chainMarkers) {
       if (self.model.chainMarkers[p]) continue;
       var a = createButton().css("background-color", p);

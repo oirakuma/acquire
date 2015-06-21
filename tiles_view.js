@@ -15,9 +15,7 @@
         if ($(this).css("color") != orange) return;
         var name = $(this).text();
         playedTile = name;
-        $(this).css("background-color", "gray");
-        $(this).css("border", "1px outset gray");
-        $(this).text("");
+        self.model.putTile(name);
         if (self.model.isHotelMerged(name)) {
           console.log("Merge!");
           renderMergedOption(self.model);

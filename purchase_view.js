@@ -23,6 +23,12 @@
         $(self.el).append(createChainMarker(p));
     }
     var a = createButton().text("Done");
+    a.click(function(){
+      $(self.el).empty();
+      setTimeout(function(){
+        ai.play(1);
+      }, 500);
+    });
     $(self.el).append(a);
   }
 })(this.self);
