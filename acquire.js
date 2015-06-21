@@ -206,6 +206,8 @@ var orange = 'rgb(255, 165, 0)';
 //UI
 (function(global){
   global.render = render;
+  global.createButton = createButton;
+  global.redirectTo = redirectTo;
 
   var playedTile = null;
 
@@ -222,118 +224,6 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   function render(model, ai) {
-    function renderStockTable() {
-      var table = $('<table></table>').attr("cellspacing",1);
-      var tr = $("<tr><th></th><th>Cash</th></tr>");
-      for (var p in colors)
-        tr.append('<th>'+colors[p]+'</th>');
-      table.append(tr);
-      for (var i = 0; i < model.players.length; i++) {
-        tr = $("<tr></tr>");
-        tr.append('<td>'+i+'</td>');
-        tr.append('<td>'+model.players[i].cash+'</td>');
-        for (var p in colors) {
-          var x = model.players[i].stocks[colors[p]];
-          tr.append($('<td>'+x+'</td>').attr("align","right"));
-        }
-        table.append(tr);
-      }
-      return table;
-    }
-
-    function renderTiles() {
-      function createTile(label) {
-        var td = $('<td></td>').text(label).addClass(label);
-        td.click(function(){
-          if ($(this).css("color") != orange) return;
-          var name = $(this).text();
-          playedTile = name;
-          $(this).css("background-color", "gray");
-          $(this).css("border", "1px outset gray");
-          $(this).text("");
-          if (model.isHotelMerged(name)) {
-            console.log("Merge!");
-            renderMergedOption(model);
-          } else if (model.checkChain(name)) {
-            renderSelectChain(name);
-          } else {
-            if (model.chained())
-              renderPurchaseStocks();
-          }
-          var name = model.tiles.shift();
-          $("."+name).css("color", "orange").css("font-weight", "bold");
-        });
-        return td;
-      }
-  
-      var table = $("<table></table>").attr("cellspacing",1);
-      for (var i = 0; i < 12; i++) {
-        var tr = $("<tr></tr>");
-        for (var j = 0; j < 9; j++)
-          tr.append(createTile((j+1)+chars[i]));
-        table.append(tr);
-      }
-      $(".content").append(table);
-    }
-
-    function createChainMarker(color) {
-      var a = createButton().css("background-color",color);
-      a.click(function(){
-        model.purchaseStock(0, color);
-        $("#stocks").html(renderStockTable());
-      });
-      return a;
-    }
-
-    function renderPurchaseStocks() {
-      var table = renderStockTable();
-      $("#two").html($('<div id="stocks"></div>').append(table));
-
-      for (var p in model.chainMarkers) {
-        if (model.chainMarkers[p])
-          $("#two").append(createChainMarker(p));
-      }
-      var a = createButton().text("Done");
-      a.click(function(){
-        redirectTo("#one");
-      });
-      $("#two").append(a);
-      redirectTo("#two");
-    }
-
-    function renderSelectChain(name) {
-      var table = renderStockTable();
-      $("#two").html(table);
-  
-      for (var p in model.chainMarkers) {
-        if (model.chainMarkers[p]) continue;
-        var a = createButton().css("background-color", p);
-        (function(color){
-          a.click(function(){
-            model.setColor(name, color);
-            model.chainMarkers[color] = true;
-            setTimeout(function(){
-              redirectTo("#one");
-              ai.play();
-            }, 500);
-          });
-        })(p);
-        $("#two").append(a);
-      }
-      redirectTo("#two");
-    }
-
-    function renderMergedOption(model) {
-      var table = renderStockTable();
-      $("#two").html(table);
-      var a = createButton().text("Sell");
-      $("#two").append(a);
-      var a = createButton().text("Trade");
-      $("#two").append(a);
-      redirectTo("#two");
-    }
-
-    renderTiles();
     for (var i = 0; i < 6; i++) {
       var name = model.tiles.shift();
       $("."+name).css("color", "orange").css("font-weight", "bold");
@@ -341,8 +231,15 @@ var orange = 'rgb(255, 165, 0)';
   }
 })(this.self);
 
+var stockTableView = null;
+var purchaseView = null;
 $(document).ready(function(){
   var acquire = new Acquire();
   var ai = new ComputerAI(acquire);
+  stockTableView = new StockTableView({model:acquire,id:"#two"});
+  stockTableView.render();
+  var tilesView = new TilesView({model:acquire,id:".content"});
+  tilesView.render();
+  purchaseView = new PurchaseView({model:acquire, el:"#purchase"});
   render(acquire, ai);
 });
