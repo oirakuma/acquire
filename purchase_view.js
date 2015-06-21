@@ -10,7 +10,8 @@
     var self = this;
 
     function createChainMarker(color) {
-      var a = createButton().css("background-color",color);
+      var a = createButton().css("background-color",color).addClass("ui-mini");
+      a.text(self.model.price(color));
       var count = 0;
       a.click(function(){
         if (count >= 3) {
@@ -28,7 +29,7 @@
     this.model.eachChain(function(color){
       $(self.el).append(createChainMarker(color));
     });
-    var a = createButton().text("Done");
+    var a = createButton().text("Done").addClass("ui-mini");
     a.click(function(){
       $(self.el).empty();
       setTimeout(function(){

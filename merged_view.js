@@ -11,7 +11,7 @@
     console.log("merger: "+this.model.board.merger);
     var self = this;
     
-    var a = createButton().text("Sell");
+    var a = createButton().text("Sell").css("background-color", this.model.board.merged);
     a.click(function(){
       self.model.players[0].stocks[self.model.board.merged]--;
       self.model.players[0].cash += self.model.price(self.model.board.merged);
@@ -19,7 +19,7 @@
     });
     $(this.el).append(a);
 
-    var a = createButton().text("Trade");
+    var a = createButton().text("Trade").css("background-color", this.model.board.merged);
     a.click(function(){
       self.model.players[0].stocks[self.model.board.merged] -= 2;
       self.model.players[0].stocks[self.model.board.merger] += 1;
@@ -31,6 +31,9 @@
     a.click(function(){
       $(self.el).empty();
       self.model.merge();
+      setTimeout(function(){
+        ai.play(1);
+      }, 500);
     });
     $(this.el).append(a);
   }
