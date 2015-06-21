@@ -13,31 +13,33 @@
   }
 
   ComputerAI.prototype.play = function(id) {
-    var t = this.model.players[1].tiles.shift();
-    this.model.putTile(t);
-    logView.append('Computer played '+t+'.');
-    if (this.model.isHotelMerged(t)) {
-      console.log("Merged!");
-      var maxSize = null;
-      var maxColor = null;
-      for (var p in colors) {
-        var size = this.model.getHotelChainSize(colors[p]);
-        if (maxSize == null || size > maxSize) {
-          maxSize = size;
-          maxColor = p;
-        }
-        console.log(maxColor);
-      }
-    } else if (this.model.checkChain(t)) {
+    var name = this.model.players[1].tiles.shift();
+    this.model.putTile(name);
+    logView.append('Computer('+id+') played '+name+'.');
+    
+    if (this.model.isHotelMerged(name)) {
+      this.model.merge();
+    } else if (this.model.checkChain(name)) {
       var selectedColor = null;
       this.model.eachChainMarker(function(color){
         selectedColor = color;
       });
-
-      this.model.setColor(t, selectedColor);
+      this.model.setColor(name, selectedColor);
       this.model.takeChainMarker(selectedColor);
-      logView.append("Computer put "+selectedColor+" chain marker on "+t+".");
+      logView.append("Computer("+id+") put "+selectedColor+" chain marker on "+name+".");
+    } else {
+      var selectedColor = null;
+      this.model.eachChain(function(color){
+        if (Math.floor(Math.random()*3) == 0)
+          selectedColor = color;
+      });
+      if (selectedColor) {
+        this.model.purchaseStock(id, selectedColor);
+        logView.append("Computer("+id+") purchased "+selectedColor+".");
+        stockTableView.render();
+      }
     }
+
     var t = this.model.tiles.shift();
     this.model.players[1].tiles.push(t);
 
