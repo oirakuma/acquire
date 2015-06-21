@@ -134,15 +134,18 @@
   
     //4方向にホテルかホテルチェーンがあるかどうか調べる
     //ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
+    var expanded = false;
+    var hoteled = false;
     for (var i = 0; i < vx.length; i++) {
       var name2 = self.getName(name, vx[i], vy[i]);
       if (color2 = self.isHotelChain(name2)) {
+        expanded = true;
         self.setColor(name, color2);
       } else if (self.isHotel(name2)) {
-        console.log("isHotel");
-        return true;
+        hoteled = true;
       }
     }
-    return false;
+    if (expanded) return false;
+    return hoteled;
   }
 })(this.self);
