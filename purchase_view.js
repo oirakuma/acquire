@@ -11,7 +11,13 @@
 
     function createChainMarker(color) {
       var a = createButton().css("background-color",color);
+      var count = 0;
       a.click(function(){
+        if (count >= 3) {
+          alert("You can purchase 3");
+          return;
+        }
+        count++;
         self.model.purchaseStock(0, color);
         stockTableView.render();
       });
