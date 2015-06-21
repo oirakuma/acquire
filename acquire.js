@@ -1,9 +1,5 @@
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 var colors = ["red","yellow","orange","green","blue","purple","cyan"];
-//var gray = 'rgb(128, 128, 128)';
-var gray = 'gray';
-var lightgray = 'rgb(211, 211, 211)';
-var orange = 'rgb(255, 165, 0)';
 
 //model
 (function(global){
@@ -117,6 +113,7 @@ var orange = 'rgb(255, 165, 0)';
     this.players[stockholders[0]].cash += this.getShare(this.board.merged);
     this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
     stockTableView.render();
+    tilesView.render();
   }
 
   Acquire.prototype.takeChainMarker = function(color) {

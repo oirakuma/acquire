@@ -1,6 +1,10 @@
 (function(global){
   global.Board = Board;
 
+//  var gray = 'rgb(128, 128, 128)';
+  var gray = 'gray';
+  var lightgray = 'rgb(211, 211, 211)';
+
   function Board() {
     //ex) tiles["3G"] = "red"
     this.tiles = {};

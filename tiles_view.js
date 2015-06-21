@@ -6,53 +6,49 @@
     this.id = option.id;
   }
 
-  TilesView.prototype.render = function() {
+  TilesView.prototype.createTile = function(label) {
     var self = this;
 
-    function createTile(label) {
-      var td = $('<td></td>').addClass(label);
-      var color = null;
-      if (color = self.model.board.getColor(label))
-        td.css("background-color", color).css("border", "1px outset "+color);
-      else
-        td.text(label);
-      for (var i = 0; i < self.model.players[0].tiles.length; i++) {
-        if (self.model.players[0].tiles[i] == label)
-          td.css("color", "orange").css("font-weight", "bold");
-      }
-      td.click(function(){
-        //コメントアウトするとどこでもタイルを置ける
-//        if ($(this).css("color") != orange) return;
-        var name = $(this).text();
-        self.model.board.putTile(name);
-        if (self.model.board.isHotelMerged(name)) {
-          var view = new MergedView({model:self.model,el:"#merged"});
-          view.render();
-        } else if (self.model.board.checkChain(name)) {
-          var view = new ChainMarkersView({
-            model:self.model,
-            el:"#chain-markers",
-            name:name
-          });
-          view.render();
-        } else {
-          if (self.model.chained())
-            purchaseView.render();
-          else
-            ai.play(1);
-        }
-        var name = self.model.tiles.shift();
-        $("."+name).css("color", "orange").css("font-weight", "bold");
-        self.render();
-      });
-      return td;
+    var td = $('<td></td>').addClass(label);
+    var color = null;
+    if (color = self.model.board.getColor(label))
+      td.css("background-color", color).css("border", "1px outset "+color);
+    else
+      td.text(label);
+    for (var i = 0; i < self.model.players[0].tiles.length; i++) {
+      if (self.model.players[0].tiles[i] == label)
+        td.css("color", "orange").css("font-weight", "bold");
     }
+    td.click(function(){
+      //コメントアウトするとどこでもタイルを置ける
+//        if ($(this).css("color") != orange) return;
+      var name = $(this).text();
+      self.model.board.putTile(name);
+      if (self.model.board.isHotelMerged(name)) {
+        var view = new MergedView({model:self.model,el:"#merged"});
+        view.render();
+      } else if (self.model.board.checkChain(name)) {
+        var view = new ChainMarkersView({model:self.model,el:"#chain-markers",name:name
+        });
+        view.render();
+      } else {
+        if (self.model.chained())
+          purchaseView.render();
+        else
+          ai.play(1);
+      }
+      self.model.players[0].tiles.push(self.model.tiles.shift());
+      self.render();
+    });
+    return td;
+  }
 
+  TilesView.prototype.render = function() {
     var table = $("<table></table>").attr("cellspacing",1);
     for (var i = 0; i < 12; i++) {
       var tr = $("<tr></tr>");
       for (var j = 0; j < 9; j++)
-        tr.append(createTile((j+1)+chars[i]));
+        tr.append(this.createTile((j+1)+chars[i]));
       table.append(tr);
     }
     $(this.id).html(table);
