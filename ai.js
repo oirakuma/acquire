@@ -29,13 +29,14 @@
         console.log(maxColor);
       }
     } else if (this.model.checkChain(t)) {
-      for (var color in this.model.chainMarkers) {
-        if (!this.model.chainMarkers[color])
-          break;
-      }
-      this.model.setColor(t, color);
-      this.model.chainMarkers[color] = true;
-      logView.append("Computer put "+color+" chain marker on "+t+".");
+      var selectedColor = null;
+      this.model.eachChainMarker(function(color){
+        selectedColor = color;
+      });
+
+      this.model.setColor(t, selectedColor);
+      this.model.takeChainMarker(selectedColor);
+      logView.append("Computer put "+selectedColor+" chain marker on "+t+".");
     }
     var t = this.model.tiles.shift();
     this.model.players[1].tiles.push(t);

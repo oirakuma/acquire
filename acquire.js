@@ -9,6 +9,8 @@ var orange = 'rgb(255, 165, 0)';
 (function(global){
   global.Acquire = Acquire;
 
+  var chainMarkers = {};
+
   function Acquire() {
     //tiles
     this.tiles = shuffle(shuffle(createTiles()));
@@ -20,10 +22,8 @@ var orange = 'rgb(255, 165, 0)';
       for (var j = 0; j < 6; j++)
         this.players[i].tiles.push(this.tiles.shift());
     }
-    //chain markers
-    this.chainMarkers = {};
     for (var p in colors)
-      this.chainMarkers[colors[p]] = false;
+      chainMarkers[colors[p]] = false;
   }
 
   function createTiles() {
@@ -183,20 +183,24 @@ var orange = 'rgb(255, 165, 0)';
     //さっき置いたタイルの色を変更する。
     $("#tiles ."+self.name).css("background-color", self.merger);
     //チェーンマーカーを返す。
-    self.chainMarkers[self.merged] = false;
+    chainMarkers[self.merged] = false;
+  }
+
+  Acquire.prototype.takeChainMarker = function(color) {
+    chainMarkers[color] = true;
   }
 
   Acquire.prototype.eachChain = function(callback) {
-    for (var p in this.chainMarkers) {
-      if (this.chainMarkers[p])
+    for (var p in chainMarkers) {
+      if (chainMarkers[p])
         callback(p);
     }
     return false;
   }
   
   Acquire.prototype.eachChainMarker = function(callback) {
-    for (var p in this.chainMarkers) {
-      if (!this.chainMarkers[p])
+    for (var p in chainMarkers) {
+      if (!chainMarkers[p])
         callback(p);
     }
     return false;
@@ -256,8 +260,8 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.chained = function() {
-    for (var p in this.chainMarkers) {
-      if (this.chainMarkers[p])
+    for (var p in chainMarkers) {
+      if (chainMarkers[p])
         return true;
     }
     return false;
@@ -270,7 +274,7 @@ var orange = 'rgb(255, 165, 0)';
 
   Acquire.prototype.buildChain = function(name, color) {
     this.setColor(name, color);
-    this.chainMarkers[color] = true;
+    chainMarkers[color] = true;
     this.players[0].stocks[color] += 1;
   }
 
