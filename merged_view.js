@@ -7,22 +7,22 @@
   }
 
   MergedView.prototype.render = function() {
-    console.log("merged: "+this.model.merged);
-    console.log("merger: "+this.model.merger);
+    console.log("merged: "+this.model.board.merged);
+    console.log("merger: "+this.model.board.merger);
     var self = this;
     
     var a = createButton().text("Sell");
     a.click(function(){
-      self.model.players[0].stocks[self.model.merged]--;
-      self.model.players[0].cash += self.model.price(self.model.merged);
+      self.model.players[0].stocks[self.model.board.merged]--;
+      self.model.players[0].cash += self.model.price(self.model.board.merged);
       stockTableView.render();
     });
     $(this.el).append(a);
 
     var a = createButton().text("Trade");
     a.click(function(){
-      self.model.players[0].stocks[self.model.merged] -= 2;
-      self.model.players[0].stocks[self.model.merger] += 1;
+      self.model.players[0].stocks[self.model.board.merged] -= 2;
+      self.model.players[0].stocks[self.model.board.merger] += 1;
       stockTableView.render();
     });
     $(this.el).append(a);

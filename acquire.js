@@ -14,6 +14,8 @@ var orange = 'rgb(255, 165, 0)';
   function Acquire() {
     //tiles
     this.tiles = shuffle(shuffle(createTiles()));
+    //board
+    this.board = new Board();
     //players
     this.players = [];
     for (var i = 0; i < 4; i++)
@@ -22,6 +24,7 @@ var orange = 'rgb(255, 165, 0)';
       for (var j = 0; j < 6; j++)
         this.players[i].tiles.push(this.tiles.shift());
     }
+    //chainMarkers
     for (var p in colors)
       chainMarkers[colors[p]] = false;
   }
@@ -42,7 +45,7 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.price = function(color) {
-    var size = this.getHotelChainSize(color)
+    var size = this.board.getHotelChainSize(color)
     console.log(size);
     if (color == "red" || color == "yellow") {
       if (size == 2) return 200;
@@ -81,61 +84,6 @@ var orange = 'rgb(255, 165, 0)';
     return 10*this.price(color);
   }
 
-  Acquire.prototype.getColor = function(name) {
-    if (!name) return lightgray;
-    var style = $("#tiles ."+name).attr("style");
-    if (style) {
-      var h = parseStyle(style);
-      return h["background-color"];
-    }
-    return null;
-  }
-  
-  //隣接するホテルの色も変更する
-  Acquire.prototype.setColor = function(name, color) {
-    if (this.getColor(name) == gray) {
-      $("#tiles ."+name).css("background-color", color);
-      this.setColor(this.getName(name,  1, 0), color);
-      this.setColor(this.getName(name, -1, 0), color);
-      this.setColor(this.getName(name, 0,  1), color);
-      this.setColor(this.getName(name, 0, -1), color);
-    }
-  }
-
-  Acquire.prototype.putTile = function(name) {
-    var div = $("#tiles ."+name);
-    div.css("background-color", "gray");
-    div.css("border", "1px outset gray");
-    div.text("");
-  }
-
-  function indexOfChar(c) {
-    for (var i = 0; i < chars.length; i++)
-      if (chars[i] == c)
-        return i;
-    return -1;
-  }
-  
-  Acquire.prototype.getName = function(name, vx, vy) {
-    var n = parseInt(name[0]);
-    var c = indexOfChar(name[1]);
-    n += vx;
-    c += vy;
-    if (n < 1 || n > 9 || c < 0 || c >= 12) return null;
-    return n+chars[c];
-  }
-  
-  Acquire.prototype.isHotel = function(name) {
-    var color = this.getColor(name);
-    return color == gray;
-  }
-
-  Acquire.prototype.isHotelChain = function(name) {
-    var color = this.getColor(name);
-    if (color == lightgray || color == gray) return false;
-    return color;
-  }
-
   function sortHashByValue(h) {
     var a = [];
     for (var p in h)
@@ -144,33 +92,6 @@ var orange = 'rgb(255, 165, 0)';
       if (x[1] < y[1]) return 1;
       return -1;
     });
-  }
-
-  Acquire.prototype.isHotelMerged = function(name) {
-    var vx = [1, -1, 0,  0];
-    var vy = [0,  0, 1, -1];
-
-    var colors = {};
-    var color;
-    //4方向のホテルチェーンの色を数える。
-    for (var i = 0; i < vx.length; i++) {
-      if (color = this.isHotelChain(this.getName(name, vx[i], vy[i])))
-        colors[color] = 0;
-    }
-    var count = 0;
-    for (var p in colors)
-      count += 1;
-    if (count >= 2) {
-      for (var p in colors)
-        colors[p] = this.getHotelChainSize(p);
-      var a = sortHashByValue(colors);
-      //[["yellow", 7], ["red", 5], ["blue", 3]]
-      console.log(a);
-      this.name = name;
-      this.merger = a[0][0];
-      this.merged = a[1][0];
-    }
-    return count >= 2;
   }
 
   Acquire.prototype.getStockholders = function(color) {
@@ -187,25 +108,14 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.merge = function() {
-    var self = this;
-    //吸収されるホテルのタイルを吸収するホテルの色に変更する
-    $("#tiles td").map(function(){
-      var style = $(this).attr("style");
-      if (style) {
-        var h = parseStyle(style);
-        if (h["background-color"] == self.merged)
-          $(this).css("background-color", self.merger);
-      }
-    });
-    //さっき置いたタイルの色を変更する。
-    $("#tiles ."+self.name).css("background-color", self.merger);
+    this.board.merge();
     //チェーンマーカーを返す。
-    chainMarkers[self.merged] = false;
+    chainMarkers[this.board.merged] = false;
     //株主への配当
-    var stockholders = this.getStockholders(self.merged);
+    var stockholders = this.getStockholders(this.board.merged);
     console.log("stockholders", stockholders);
-    this.players[stockholders[0]].cash += this.getShare(self.merged);
-    this.players[stockholders[1]].cash += this.getShare(self.merged)/2;
+    this.players[stockholders[0]].cash += this.getShare(this.board.merged);
+    this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
     stockTableView.render();
   }
 
@@ -213,7 +123,7 @@ var orange = 'rgb(255, 165, 0)';
     chainMarkers[color] = true;
   }
 
-  //ホテルチェーンになっているカラー
+  //ホテルチェーンになっているカラーに対して
   Acquire.prototype.eachChain = function(callback) {
     for (var p in chainMarkers) {
       if (chainMarkers[p])
@@ -222,7 +132,7 @@ var orange = 'rgb(255, 165, 0)';
     return false;
   }
   
-  //ホテルチェーンになっていないカラー
+  //ホテルチェーンになっていないカラー対して
   Acquire.prototype.eachChainMarker = function(callback) {
     for (var p in chainMarkers) {
       if (!chainMarkers[p])
@@ -231,59 +141,6 @@ var orange = 'rgb(255, 165, 0)';
     return false;
   }
   
-  Acquire.prototype.checkChain = function(name) {
-    var self = this;
-    var color1 = this.getColor(name);
-    var color2 = null;
-    var vx = [1, -1, 0,  0];
-    var vy = [0,  0, 1, -1];
-  }
-
-    function parseStyle(style) {
-      var ss = style.split(";");
-      var h = {};
-      for (var i = 0; i < ss.length-1; i++) {
-        var xx = ss[i].split(":");
-        h[xx[0].trim()] = xx[1].trim();
-      }
-      return h;
-    }
-    
-  Acquire.prototype.getHotelChainSize = function(color) {
-    var tiles = $("#tiles td");
-    var a = tiles.filter(function(){
-      var style = $(this).attr("style");
-      if (style) {
-        var h = parseStyle(style);
-        if (h["background-color"] == color)
-          return true;
-      }
-      return false;
-    });
-    return a.length;
-  }
-  
-  Acquire.prototype.checkChain = function(name) {
-    var self = this;
-    var color1 = this.getColor(name);
-    var color2 = null;
-    var vx = [1, -1, 0,  0];
-    var vy = [0,  0, 1, -1];
-  
-    //4方向にホテルかホテルチェーンがあるかどうか調べる
-    //ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
-    for (var i = 0; i < vx.length; i++) {
-      var name2 = self.getName(name, vx[i], vy[i]);
-      if (color2 = self.isHotelChain(name2)) {
-        self.setColor(name, color2);
-      } else if (self.isHotel(name2)) {
-        console.log("isHotel");
-        return true;
-      }
-    }
-    return false;
-  }
-
   Acquire.prototype.chained = function() {
     for (var p in chainMarkers) {
       if (chainMarkers[p])
@@ -298,7 +155,7 @@ var orange = 'rgb(255, 165, 0)';
   }
 
   Acquire.prototype.buildChain = function(name, color) {
-    this.setColor(name, color);
+    this.board.setColor(name, color);
     chainMarkers[color] = true;
     this.players[0].stocks[color] += 1;
   }
@@ -314,6 +171,7 @@ var orange = 'rgb(255, 165, 0)';
 
 var stockTableView = null;
 var purchaseView = null;
+var tilesView = null;
 var ai = null;
 var logView = new LogView({el:"#log"});
 $(document).ready(function(){
@@ -321,7 +179,7 @@ $(document).ready(function(){
   ai = new ComputerAI(acquire);
   stockTableView = new StockTableView({model:acquire,id:"#stocks"});
   stockTableView.render();
-  var tilesView = new TilesView({model:acquire,id: "#tiles"});
+  tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
   purchaseView = new PurchaseView({model:acquire, el:"#purchase"});
   render(acquire, ai);

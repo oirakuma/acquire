@@ -5,4 +5,5 @@ function LogView(option) {
 
 LogView.prototype.append = function(s) {
   $(this.el).append('<div>'+s+'</div>');
+  $(this.el).scrollTop(99999);
 }

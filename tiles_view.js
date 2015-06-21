@@ -10,16 +10,25 @@
     var self = this;
 
     function createTile(label) {
-      var td = $('<td></td>').text(label).addClass(label);
+      var td = $('<td></td>').addClass(label);
+      var color = null;
+      if (color = self.model.board.getColor(label))
+        td.css("background-color", color).css("border", "1px outset "+color);
+      else
+        td.text(label);
+      for (var i = 0; i < self.model.players[0].tiles.length; i++) {
+        if (self.model.players[0].tiles[i] == label)
+          td.css("color", "orange").css("font-weight", "bold");
+      }
       td.click(function(){
         //コメントアウトするとどこでもタイルを置ける
 //        if ($(this).css("color") != orange) return;
         var name = $(this).text();
-        self.model.putTile(name);
-        if (self.model.isHotelMerged(name)) {
+        self.model.board.putTile(name);
+        if (self.model.board.isHotelMerged(name)) {
           var view = new MergedView({model:self.model,el:"#merged"});
           view.render();
-        } else if (self.model.checkChain(name)) {
+        } else if (self.model.board.checkChain(name)) {
           var view = new ChainMarkersView({
             model:self.model,
             el:"#chain-markers",
@@ -34,6 +43,7 @@
         }
         var name = self.model.tiles.shift();
         $("."+name).css("color", "orange").css("font-weight", "bold");
+        self.render();
       });
       return td;
     }
@@ -45,6 +55,6 @@
         tr.append(createTile((j+1)+chars[i]));
       table.append(tr);
     }
-    $(this.id).append(table);
+    $(this.id).html(table);
   }
 })(this.self);

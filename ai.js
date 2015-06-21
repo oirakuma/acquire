@@ -14,18 +14,18 @@
 
   ComputerAI.prototype.play = function(id) {
     var name = this.model.players[1].tiles.shift();
-    this.model.putTile(name);
+    this.model.board.putTile(name);
     logView.append('Computer('+id+') played '+name+'.');
     
-    if (this.model.isHotelMerged(name)) {
+    if (this.model.board.isHotelMerged(name)) {
       var view = new MergedView({model:this.model, el:"#merged"});
       view.render();
-    } else if (this.model.checkChain(name)) {
+    } else if (this.model.board.checkChain(name)) {
       var selectedColor = null;
       this.model.eachChainMarker(function(color){
         selectedColor = color;
       });
-      this.model.setColor(name, selectedColor);
+      this.model.board.setColor(name, selectedColor);
       this.model.takeChainMarker(selectedColor);
       logView.append("Computer("+id+") put "+selectedColor+" chain marker on "+name+".");
     } else {
@@ -47,6 +47,7 @@
     if (id < 4-1) {
       setTimeout(function(){
         ai.play(id+1);
+        tilesView.render();
       }, 500);
     }
   }
