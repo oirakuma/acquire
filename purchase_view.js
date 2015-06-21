@@ -25,10 +25,9 @@
     }
 
     $(self.el).append('<p>Purchase stocks.</p>');
-    for (var p in this.model.chainMarkers) {
-      if (this.model.chainMarkers[p])
-        $(self.el).append(createChainMarker(p));
-    }
+    this.model.eachChain(function(color){
+      $(self.el).append(createChainMarker(color));
+    });
     var a = createButton().text("Done");
     a.click(function(){
       $(self.el).empty();

@@ -185,6 +185,22 @@ var orange = 'rgb(255, 165, 0)';
     //チェーンマーカーを返す。
     self.chainMarkers[self.merged] = false;
   }
+
+  Acquire.prototype.eachChain = function(callback) {
+    for (var p in this.chainMarkers) {
+      if (this.chainMarkers[p])
+        callback(p);
+    }
+    return false;
+  }
+  
+  Acquire.prototype.eachChainMarker = function(callback) {
+    for (var p in this.chainMarkers) {
+      if (!this.chainMarkers[p])
+        callback(p);
+    }
+    return false;
+  }
   
   Acquire.prototype.checkChain = function(name) {
     var self = this;
