@@ -18,7 +18,8 @@
     logView.append('Computer('+id+') played '+name+'.');
     
     if (this.model.isHotelMerged(name)) {
-      this.model.merge();
+      var view = new MergedView({model:this.model, el:"#merged"});
+      view.render();
     } else if (this.model.checkChain(name)) {
       var selectedColor = null;
       this.model.eachChainMarker(function(color){

@@ -175,8 +175,11 @@ var orange = 'rgb(255, 165, 0)';
 
   Acquire.prototype.getStockholders = function(color) {
     var h = {};
-    for (var i = 0; i < this.players.length; i++)
+    console.log(color);
+    for (var i = 0; i < this.players.length; i++) {
+      console.log(this.players[i].stocks);
       h[i] = this.players[i].stocks[color];
+    }
     console.log(h);
     return sortHashByValue(h).map(function(x){
       return x[0];
@@ -199,10 +202,11 @@ var orange = 'rgb(255, 165, 0)';
     //チェーンマーカーを返す。
     chainMarkers[self.merged] = false;
     //株主への配当
-    var stockholders = this.getStockholders();
+    var stockholders = this.getStockholders(self.merged);
     console.log("stockholders", stockholders);
     this.players[stockholders[0]].cash += this.getShare(self.merged);
     this.players[stockholders[1]].cash += this.getShare(self.merged)/2;
+    stockTableView.render();
   }
 
   Acquire.prototype.takeChainMarker = function(color) {
@@ -311,7 +315,7 @@ var orange = 'rgb(255, 165, 0)';
 var stockTableView = null;
 var purchaseView = null;
 var ai = null;
-var logView = new LogView("#log");
+var logView = new LogView({el:"#log"});
 $(document).ready(function(){
   var acquire = new Acquire();
   ai = new ComputerAI(acquire);
