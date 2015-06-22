@@ -7,7 +7,7 @@
   }
 
   TilesView.prototype.play = function(id, name) {
-    var self = this;
+    var self = (id == 0 ? this : ai);
 
     self.model.board.putTile(name, id);
     setTimeout(function(){
@@ -16,22 +16,31 @@
 
     //1) 吸収合併が発生
     if (self.model.board.isHotelMerged(name)) {
-      var view = new MergedView({model:self.model,el:"#merged"});
-      view.render().then(function(){
-        self.purchasePhase();
-      })
+      self.mergedOption().then(function(){
+        self.model.merge();
+        self.purchasePhase(id);
+      });
     //2) 新規チェーンの形成
     } else if (self.model.board.checkChain(name)) {
-      var view = new ChainMarkersView({model:self.model,el:"#chain-markers"});
-      view.render().then(function(color){
+      self.selectHotelChainColor().then(function(color){
         self.model.buildChain(0, name, color);
         stockTableView.render();
-        self.purchasePhase();
+        self.purchasePhase(id);
       });
     //3) イベントなし
     } else {
-      self.purchasePhase();
+      self.purchasePhase(id);
     }
+  }
+
+  TilesView.prototype.mergedOption = function() {
+    var view = new MergedView({model:this.model,el:"#merged"});
+    return view.render();
+  }
+
+  TilesView.prototype.selectHotelChainColor = function() {
+    var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
+    return view.render();
   }
 
   TilesView.prototype.createTile = function(name) {
@@ -44,11 +53,13 @@
     return td;
   }
 
-  TilesView.prototype.purchasePhase = function() {
+  //購入フェーズ
+  TilesView.prototype.purchasePhase = function(id) {
+    var self = this;
     var view = new PurchaseView({model:this.model, el:"#purchase"});
     view.render().then(function(){
       setTimeout(function(){
-        ai.play(1);
+        ai.play(id+1);
       }, 1000);
     });
   }
