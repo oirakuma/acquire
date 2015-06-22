@@ -12,7 +12,7 @@
 
     function createChainMarker(color) {
       var a = createButton().css("background-color",color).addClass("ui-mini");
-      a.text(self.model.price(color));
+//      a.text(self.model.price(color));
       a.click(function(){
         if (count >= 3) {
           alert("You can purchase 3");
