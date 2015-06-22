@@ -52,7 +52,7 @@
       table.append(tr);
     }
 
-    tr = $('<tr><td>B</td><td></td></tr>');
+    tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
     }
