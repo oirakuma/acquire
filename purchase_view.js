@@ -8,11 +8,11 @@
 
   PurchaseView.prototype.render = function() {
     var self = this;
+    var count = 0;
 
     function createChainMarker(color) {
       var a = createButton().css("background-color",color).addClass("ui-mini");
       a.text(self.model.price(color));
-      var count = 0;
       a.click(function(){
         if (count >= 3) {
           alert("You can purchase 3");

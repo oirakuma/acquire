@@ -23,6 +23,10 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     //chainMarkers
     for (var p in colors)
       chainMarkers[colors[p]] = false;
+    //stocks
+    this.stocks = {};
+    for (var p in colors)
+      this.stocks[colors[p]] = 25;
   }
 
   function createTiles() {
@@ -33,7 +37,7 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     }
     return ts;
   }
-  
+ 
   function shuffle(a) {
     return a.sort(function(){
       return Math.random()-0.5;
@@ -149,12 +153,14 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
   Acquire.prototype.purchaseStock = function(x, color) {
     this.players[x].stocks[color] += 1;
     this.players[x].cash -= this.price(color);
+    this.stocks[color] -= 1;
   }
 
   Acquire.prototype.buildChain = function(name, color) {
     this.board.setColor(name, color);
     chainMarkers[color] = true;
     this.players[0].stocks[color] += 1;
+    this.stocks[color] -= 1;
   }
 
   function Player() {

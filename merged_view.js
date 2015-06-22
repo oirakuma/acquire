@@ -11,7 +11,8 @@
     console.log("merger: "+this.model.board.merger);
     var self = this;
     
-    var a = createButton().text("Sell").css("background-color", this.model.board.merged);
+    var a = createButton().text("Sell");
+    a.css("background-color", this.model.board.merged);
     a.click(function(){
       self.model.players[0].stocks[self.model.board.merged]--;
       self.model.players[0].cash += self.model.price(self.model.board.merged);

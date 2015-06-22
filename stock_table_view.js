@@ -18,10 +18,15 @@
       tr.append('<td>'+this.model.players[i].cash+'</td>');
       for (var p in colors) {
         var x = this.model.players[i].stocks[colors[p]];
-        tr.append($('<td>'+x+'</td>'));
+        tr.append('<td>'+x+'</td>');
       }
       table.append(tr);
     }
+    tr = $('<tr><td>B</td><td></td></tr>');
+    for (var p in colors) {
+      tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
+    }
+    table.append(tr);
     $(this.id).html(table);
     return table;
   }
