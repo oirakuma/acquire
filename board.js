@@ -15,8 +15,10 @@
     return this.tiles[name];
   }
 
-  Board.prototype.putTile = function(name) {
+  Board.prototype.putTile = function(name, id) {
     this.tiles[name] = "gray";
+    var player = (id ? 'Computer('+id+')' : 'You');
+    logView.append(player+' put a tile on '+name+'.');
   }
 
   //隣接するホテルの色も変更する

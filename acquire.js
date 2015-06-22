@@ -160,11 +160,14 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.stocks[color] -= 1;
   }
 
-  Acquire.prototype.buildChain = function(name, color) {
+  Acquire.prototype.buildChain = function(id, name, color) {
     this.board.setColor(name, color);
     chainMarkers[color] = true;
-    this.players[0].stocks[color] += 1;
+    this.players[id].stocks[color] += 1;
     this.stocks[color] -= 1;
+
+    var player = (id == 0 ? 'You' : 'Computer('+id+')');
+    logView.append(player+' put '+color+' chain marker on '+name+'.');
   }
 
   Acquire.prototype.sell = function(x) {

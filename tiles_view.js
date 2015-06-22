@@ -24,7 +24,7 @@
 //        if ($(this).css("color") != orange) return;
       var name = $(this).text();
       self.model.board.putTile(name);
-      logView.append('You played '+name+'.');
+      logView.append('You put a tile on '+name+'.');
       if (self.model.board.isHotelMerged(name)) {
         var view = new MergedView({model:self.model,el:"#merged"});
         view.render();

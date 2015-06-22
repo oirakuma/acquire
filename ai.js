@@ -13,9 +13,8 @@
   }
 
   ComputerAI.prototype.play = function(id) {
-    var name = this.model.players[1].tiles.shift();
-    this.model.board.putTile(name);
-    logView.append('Computer('+id+') played '+name+'.');
+    var name = this.model.players[id].tiles.shift();
+    this.model.board.putTile(name, id);
     
     if (this.model.board.isHotelMerged(name)) {
       var view = new MergedView({model:this.model, el:"#merged"});
@@ -25,10 +24,15 @@
       this.model.eachChainMarker(function(color){
         selectedColor = color;
       });
-      this.model.board.setColor(name, selectedColor);
-      this.model.takeChainMarker(selectedColor);
-      logView.append("Computer("+id+") put "+selectedColor+" chain marker on "+name+".");
+      this.model.buildChain(id, name, selectedColor);
+      setTimeout(function(){
+        tilesView.render();
+      }, 0);
     } else {
+      setTimeout(function(){
+        tilesView.render();
+      }, 0);
+      //株券を買う
       var selectedColor = null;
       this.model.eachChain(function(color){
         if (Math.floor(Math.random()*3) == 0)
@@ -37,16 +41,17 @@
       if (selectedColor) {
         this.model.purchaseStock(id, selectedColor);
         logView.append("Computer("+id+") purchased "+selectedColor+".");
-        stockTableView.render();
+        setTimeout(function(){
+          stockTableView.render();
+        }, 0);
       }
     }
 
-    this.model.players[1].tiles.push(this.model.getTile());
+    this.model.players[id].tiles.push(this.model.getTile());
 
-    if (id < 4-1) {
+    if (id < this.model.players.length-1) {
       setTimeout(function(){
         ai.play(id+1);
-        tilesView.render();
       }, 1000);
     }
   }

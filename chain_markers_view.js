@@ -12,7 +12,7 @@
     self.model.eachChainMarker(function(color){
       var a = createButton().css("background-color", color);
       a.click(function(){
-        self.model.buildChain(self.name, color);
+        self.model.buildChain(0, self.name, color);
         $(self.el).empty();
         stockTableView.render();
         purchaseView.render();
