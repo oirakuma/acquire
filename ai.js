@@ -41,8 +41,7 @@
       }
     }
 
-    var t = this.model.tiles.shift();
-    this.model.players[1].tiles.push(t);
+    this.model.players[1].tiles.push(this.model.getTile());
 
     if (id < 4-1) {
       setTimeout(function(){

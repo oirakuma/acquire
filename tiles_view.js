@@ -37,7 +37,7 @@
         else
           ai.play(1);
       }
-      self.model.players[0].tiles.push(self.model.tiles.shift());
+      self.model.players[0].tiles.push(self.model.getTile());
       self.render();
     });
     return td;

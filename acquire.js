@@ -18,7 +18,7 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
       this.players[i] = new Player();
     for (var i = 0; i < this.players.length; i++) {
       for (var j = 0; j < 6; j++)
-        this.players[i].tiles.push(this.tiles.shift());
+        this.players[i].tiles.push(this.getTile());
     }
     //chainMarkers
     for (var p in colors)
@@ -42,6 +42,10 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     return a.sort(function(){
       return Math.random()-0.5;
     });
+  }
+
+  Acquire.prototype.getTile = function() {
+    return this.tiles.shift();
   }
 
   Acquire.prototype.price = function(color) {
