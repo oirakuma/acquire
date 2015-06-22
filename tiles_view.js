@@ -6,42 +6,51 @@
     this.id = option.id;
   }
 
-  TilesView.prototype.createTile = function(label) {
+  TilesView.prototype.play = function(id, name) {
     var self = this;
 
-    var td = $('<td></td>').addClass(label);
-    var color = null;
-    if (color = self.model.board.getColor(label))
-      td.css("background-color", color).css("border", "1px outset "+color);
-    else
-      td.text(label);
-    for (var i = 0; i < self.model.players[0].tiles.length; i++) {
-      if (self.model.players[0].tiles[i] == label)
-        td.css("color", "orange").css("font-weight", "bold");
+    self.model.board.putTile(name, id);
+    setTimeout(function(){
+      tilesView.render();
+    }, 0);
+
+    //1) 吸収合併が発生
+    if (self.model.board.isHotelMerged(name)) {
+      var view = new MergedView({model:self.model,el:"#merged"});
+      view.render().then(function(){
+        self.purchasePhase();
+      })
+    //2) 新規チェーンの形成
+    } else if (self.model.board.checkChain(name)) {
+      var view = new ChainMarkersView({model:self.model,el:"#chain-markers"});
+      view.render().then(function(color){
+        self.model.buildChain(0, name, color);
+        stockTableView.render();
+        self.purchasePhase();
+      });
+    //3) イベントなし
+    } else {
+      self.purchasePhase();
     }
+  }
+
+  TilesView.prototype.createTile = function(name) {
+    var self = this;
+    var td = $('<td></td>').addClass(name).text(name);
     td.click(function(){
-      //コメントアウトするとどこでもタイルを置ける
-//        if ($(this).css("color") != orange) return;
       var name = $(this).text();
-      self.model.board.putTile(name, 0);
-      if (self.model.board.isHotelMerged(name)) {
-        var view = new MergedView({model:self.model,el:"#merged", id:0});
-        view.render();
-      } else if (self.model.board.checkChain(name)) {
-        var view = new ChainMarkersView({model:self.model,el:"#chain-markers",name:name
-        });
-        view.render();
-      } else if (self.model.chained()) {
-        purchaseView.render();
-      } else {
-        setTimeout(function(){
-          ai.play(1);
-        }, 1000);
-      }
-      self.model.pushTile(0);
-      self.render();
+      self.play(0, name);
     });
     return td;
+  }
+
+  TilesView.prototype.purchasePhase = function() {
+    var view = new PurchaseView({model:this.model, el:"#purchase"});
+    view.render().then(function(){
+      setTimeout(function(){
+        ai.play(1);
+      }, 1000);
+    });
   }
 
   TilesView.prototype.render = function() {
@@ -51,6 +60,20 @@
       for (var j = 0; j < 9; j++)
         tr.append(this.createTile((j+1)+chars[i]));
       table.append(tr);
+    }
+
+    //タイルが置かれているエリアの色を変更する
+    for (var p in this.model.board.tiles) {
+      var td = table.find("."+p);
+      td.css("background-color", this.model.board.tiles[p]);
+      td.css("border", "1px outset "+this.model.board.tiles[p]);
+      td.text("");
+    }
+
+    //プレイヤーのタイルを強調する
+    for (var i = 0; i < this.model.players[0].tiles.length; i++) {
+      var name = this.model.players[0].tiles[i];
+      table.find("."+name).css("color", "orange").css("font-weight", "bold");
     }
     $(this.id).html(table);
   }

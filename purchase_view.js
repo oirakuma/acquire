@@ -29,13 +29,14 @@
     this.model.eachChain(function(color){
       $(self.el).append(createChainMarker(color));
     });
-    var a = createButton().text("Done").addClass("ui-mini");
-    a.click(function(){
-      $(self.el).empty();
-      setTimeout(function(){
-        ai.play(1);
-      }, 500);
+
+    return new Promise(function(resolve){
+      var a = createButton().text("Done").addClass("ui-mini");
+      a.click(function(){
+        $(self.el).empty();
+        resolve("OK");
+      });
+      $(self.el).append(a);
     });
-    $(self.el).append(a);
   }
 })(this.self);

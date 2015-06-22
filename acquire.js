@@ -223,6 +223,4 @@ $(document).ready(function(){
   stockTableView.render();
   tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
-  purchaseView = new PurchaseView({model:acquire, el:"#purchase"});
-  render(acquire, ai);
 });

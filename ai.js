@@ -5,17 +5,14 @@
     this.model = model;
   }
 
-  function copyBoard(board) {
-    var board2 = [];
-    for (var i = 0; i < board.length; i++)
-      board2[i] = board[i];
-    return board2;
+  ComputerAI.prototype.getMove = function(id) {
+    return this.model.players[id].tiles.shift();
   }
 
   ComputerAI.prototype.play = function(id) {
     var self = this;
 
-    var name = this.model.players[id].tiles.shift();
+    var name = this.getMove(id);
     this.model.board.putTile(name, id);
     
     //1) 吸収合併が発生

@@ -27,14 +27,12 @@
     $(this.el).append(a);
  
     var a = createButton().text("Done");
-    a.click(function(){
-      $(self.el).empty();
-      self.model.merge();
-      setTimeout(function(){
-        if (this.id < this.model.players.length-1)
-          ai.play(this.id+1);
-      }, 1000);
-    });
     $(this.el).append(a);
+    return new Promise(function(resolve){
+      a.click(function(){
+        $(this.el).empty();
+        resolve();
+      });
+    });
   }
 })(this.self);
