@@ -17,8 +17,7 @@
 
   Board.prototype.putTile = function(name, id) {
     this.tiles[name] = "gray";
-    var player = (id ? 'Computer('+id+')' : 'You');
-    logView.append(player+' put a tile on '+name+'.');
+    logView.append(id, 'placed a tile on '+name+'.');
   }
 
   //隣接するホテルの色も変更する
