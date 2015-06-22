@@ -44,6 +44,10 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     });
   }
 
+  Acquire.prototype.pushTile = function(id) {
+    this.players[id].tiles.push(this.getTile());
+  }
+
   Acquire.prototype.getTile = function() {
     return this.tiles.shift();
   }
@@ -125,6 +129,9 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
     stockTableView.render();
     tilesView.render();
+
+    logView.info(this.getShare(this.board.merged)+" shared to id:"+stockholders[0]);
+    logView.info((this.getShare(this.board.merged)/2)+" shared to id:"+stockholders[1]);
   }
 
   Acquire.prototype.takeChainMarker = function(color) {
@@ -157,10 +164,12 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     return false;
   }
 
-  Acquire.prototype.purchaseStock = function(x, color) {
-    this.players[x].stocks[color] += 1;
-    this.players[x].cash -= this.price(color);
+  Acquire.prototype.purchaseStock = function(id, color) {
+    this.players[id].stocks[color] += 1;
+    this.players[id].cash -= this.price(color);
     this.stocks[color] -= 1;
+
+    logView.append(id, "purchased "+color+".");
   }
 
   Acquire.prototype.buildChain = function(id, name, color) {
@@ -169,8 +178,7 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players[id].stocks[color] += 1;
     this.stocks[color] -= 1;
 
-    var player = (id == 0 ? 'You' : 'Computer('+id+')');
-    logView.append(player+' put '+color+' chain marker on '+name+'.');
+    logView.append(id, 'has created '+color+' on '+name+'.');
   }
 
   Acquire.prototype.sell = function(x) {
@@ -184,6 +192,14 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players[x].stocks[this.board.merger] += 1;
     this.stocks[this.board.merged] += 2;
     this.stocks[this.board.merger] -= 1;
+  }
+
+  Acquire.prototype.sellAll = function() {
+    for (var i = 0; i < this.players.length; i++) {
+      for (var p in this.players.stocks) {
+        this.players.cash += this.players.stocks[p]*this.price(p);
+      }
+    }
   }
 
   function Player() {

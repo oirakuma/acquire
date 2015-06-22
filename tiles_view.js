@@ -23,9 +23,9 @@
       //コメントアウトするとどこでもタイルを置ける
 //        if ($(this).css("color") != orange) return;
       var name = $(this).text();
-      self.model.board.putTile(name);
+      self.model.board.putTile(name, 0);
       if (self.model.board.isHotelMerged(name)) {
-        var view = new MergedView({model:self.model,el:"#merged"});
+        var view = new MergedView({model:self.model,el:"#merged", id:0});
         view.render();
       } else if (self.model.board.checkChain(name)) {
         var view = new ChainMarkersView({model:self.model,el:"#chain-markers",name:name
@@ -38,7 +38,7 @@
           ai.play(1);
         }, 1000);
       }
-      self.model.players[0].tiles.push(self.model.getTile());
+      self.model.pushTile(0);
       self.render();
     });
     return td;

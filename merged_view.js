@@ -31,8 +31,9 @@
       $(self.el).empty();
       self.model.merge();
       setTimeout(function(){
-        ai.play(1);
-      }, 500);
+        if (this.id < this.model.players.length-1)
+          ai.play(this.id+1);
+      }, 1000);
     });
     $(this.el).append(a);
   }
