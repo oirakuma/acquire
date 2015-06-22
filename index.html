@@ -16,7 +16,6 @@ table {
 }
 #log {
   overflow-y: scroll;
-  height: 5em;
 }
 #tiles td {
   color: gray;
@@ -46,16 +45,38 @@ table {
   </div>
 
   <div data-role="page" id="one">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#one" class="ui-btn-active">Main</a></li>
+        <li><a href="#two">Stock Price Table</a></li>
+        <li><a href="#log">Log</a></li>
+      </ul>
+    </div>
     <div id="tiles"></div>
     <div id="stocks"></div>
-    <div id="log"></div>
     <div id="chain-markers"></div>
     <div id="purchase"></div>
     <div id="merged"></div>
-    <a href="#two" class="ui-btn">Stock Price Table</a>
+  </div>
+
+  <div data-role="page" id="log">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#one">Main</a></li>
+        <li><a href="#two">Stock Price Table</a></li>
+        <li><a href="#log" class="ui-btn-active">Log</a></li>
+      </ul>
+    </div>
   </div>
 
   <div data-role="page" id="two">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#one">Main</a></li>
+        <li><a href="#two" class="ui-btn-active">Stock Price Table</a></li>
+        <li><a href="#log">Log</a></li>
+      </ul>
+    </div>
     <table border=1 cellspacing=1>
       <tr>
         <th>Red<br>Yellow</th>
@@ -154,7 +175,6 @@ table {
         <td>6,000</td>
       </tr>
     </table>
-    <a href="#one" class="ui-btn">Back</a>
   </div>
 
   <div data-role="page" id="setting">
