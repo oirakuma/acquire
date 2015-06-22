@@ -6,33 +6,6 @@
     this.id = option.id;
   }
 
-  TilesView.prototype.play = function(id, name) {
-    var self = (id == 0 ? this : ai);
-
-    self.model.board.putTile(name, id);
-    setTimeout(function(){
-      tilesView.render();
-    }, 0);
-
-    //1) 吸収合併が発生
-    if (self.model.board.isHotelMerged(name)) {
-      self.mergedOption().then(function(){
-        self.model.merge();
-        self.purchasePhase(id);
-      });
-    //2) 新規チェーンの形成
-    } else if (self.model.board.checkChain(name)) {
-      self.selectHotelChainColor().then(function(color){
-        self.model.buildChain(0, name, color);
-        stockTableView.render();
-        self.purchasePhase(id);
-      });
-    //3) イベントなし
-    } else {
-      self.purchasePhase(id);
-    }
-  }
-
   TilesView.prototype.mergedOption = function() {
     var view = new MergedView({model:this.model,el:"#merged"});
     return view.render();
@@ -43,12 +16,17 @@
     return view.render();
   }
 
+  TilesView.prototype.getMove = function(id) {
+    return this.name;
+  }
+
   TilesView.prototype.createTile = function(name) {
     var self = this;
     var td = $('<td></td>').addClass(name).text(name);
     td.click(function(){
-      var name = $(this).text();
-      self.play(0, name);
+      self.name = $(this).text();
+      var action = new Action(self.model);
+      action.start(0, self);
     });
     return td;
   }
@@ -59,7 +37,9 @@
     var view = new PurchaseView({model:this.model, el:"#purchase"});
     view.render().then(function(){
       setTimeout(function(){
-        ai.play(id+1);
+        var action = new Action(self.model);
+        var ai = new ComputerAI(self.model);
+        action.start(id+1, ai);
       }, 1000);
     });
   }

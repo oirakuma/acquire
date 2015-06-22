@@ -214,11 +214,9 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 var stockTableView = null;
 var purchaseView = null;
 var tilesView = null;
-var ai = null;
 var logView = new LogView({el:"#log"});
 $(document).ready(function(){
   var acquire = new Acquire();
-  ai = new ComputerAI(acquire);
   stockTableView = new StockTableView({model:acquire,id:"#stocks"});
   stockTableView.render();
   tilesView = new TilesView({model:acquire,id: "#tiles"});

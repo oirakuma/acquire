@@ -20,13 +20,6 @@
     });
   }
 
-  ComputerAI.prototype.play = function(id) {
-    var self = this;
-
-    var name = this.getMove(id);
-    tilesView.play(id, name);
-  }
-
   ComputerAI.prototype.purchasePhase = function(id) {
     var self = this;
     //株券をとりあえずランダムに買う
@@ -35,11 +28,14 @@
       if (Math.floor(Math.random()*3) == 0)
         selectedColor = color;
     });
+
     if (selectedColor)
       this.model.purchaseStock(id, selectedColor);
     setTimeout(function(){
-      if (id < self.model.players.length-1)
-        ai.play(id+1);
+      if (id < self.model.players.length-1) {
+        var action = new Action(self.model);
+        action.start(id+1, self);
+      }
     }, 1000);
   }
 })(this.self);
