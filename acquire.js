@@ -52,7 +52,8 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     var size = this.board.getHotelChainSize(color)
     console.log(size);
     if (color == "red" || color == "yellow") {
-      if (size == 2) return 200;
+      if (size == 0) return 0;
+      else if (size == 2) return 200;
       else if (size == 3) return 300;
       else if (size == 4) return 400;
       else if (size == 5) return 500;
@@ -62,7 +63,8 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
       else if (size <= 40) return 900;
       else return 1000;
     } else if (color == "orange" || color == "green" || color == "blue") {
-      if (size == 2) return 300;
+      if (size == 0) return 0;
+      else if (size == 2) return 300;
       else if (size == 3) return 400;
       else if (size == 4) return 500;
       else if (size == 5) return 600;
@@ -72,7 +74,8 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
       else if (size <= 40) return 1000;
       else return 1100;
     } else if (color == "purple" || color == "cyan") {
-      if (size == 2) return 400;
+      if (size == 0) return 0;
+      else if (size == 2) return 400;
       else if (size == 3) return 500;
       else if (size == 4) return 600;
       else if (size == 5) return 700;
