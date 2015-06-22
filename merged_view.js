@@ -14,16 +14,14 @@
     var a = createButton().text("Sell");
     a.css("background-color", this.model.board.merged);
     a.click(function(){
-      self.model.players[0].stocks[self.model.board.merged]--;
-      self.model.players[0].cash += self.model.price(self.model.board.merged);
+      self.model.sell(0);
       stockTableView.render();
     });
     $(this.el).append(a);
 
     var a = createButton().text("Trade").css("background-color", this.model.board.merged);
     a.click(function(){
-      self.model.players[0].stocks[self.model.board.merged] -= 2;
-      self.model.players[0].stocks[self.model.board.merger] += 1;
+      self.model.trade(0);
       stockTableView.render();
     });
     $(this.el).append(a);

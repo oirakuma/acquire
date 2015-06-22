@@ -47,7 +47,7 @@
       setTimeout(function(){
         ai.play(id+1);
         tilesView.render();
-      }, 500);
+      }, 1000);
     }
   }
 })(this.self);

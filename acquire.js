@@ -167,6 +167,19 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.stocks[color] -= 1;
   }
 
+  Acquire.prototype.sell = function(x) {
+    this.players[x].stocks[this.board.merged]--;
+    this.players[x].cash += this.price(this.board.merged);
+    this.stocks[this.board.merged]++;
+  }
+
+  Acquire.prototype.trade = function(x) {
+    this.players[x].stocks[this.board.merged] -= 2;
+    this.players[x].stocks[this.board.merger] += 1;
+    this.stocks[this.board.merged] += 2;
+    this.stocks[this.board.merger] -= 1;
+  }
+
   function Player() {
     this.cash = 6000;
     this.stocks = {};

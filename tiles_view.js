@@ -24,6 +24,7 @@
 //        if ($(this).css("color") != orange) return;
       var name = $(this).text();
       self.model.board.putTile(name);
+      logView.append('You played '+name+'.');
       if (self.model.board.isHotelMerged(name)) {
         var view = new MergedView({model:self.model,el:"#merged"});
         view.render();
@@ -34,8 +35,11 @@
       } else {
         if (self.model.chained())
           purchaseView.render();
-        else
-          ai.play(1);
+        else {
+          setTimeout(function(){
+            ai.play(1);
+          }, 1000);
+        }
       }
       self.model.players[0].tiles.push(self.model.getTile());
       self.render();
