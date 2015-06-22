@@ -32,14 +32,12 @@
         var view = new ChainMarkersView({model:self.model,el:"#chain-markers",name:name
         });
         view.render();
+      } else if (self.model.chained()) {
+        purchaseView.render();
       } else {
-        if (self.model.chained())
-          purchaseView.render();
-        else {
-          setTimeout(function(){
-            ai.play(1);
-          }, 1000);
-        }
+        setTimeout(function(){
+          ai.play(1);
+        }, 1000);
       }
       self.model.players[0].tiles.push(self.model.getTile());
       self.render();
