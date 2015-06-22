@@ -27,7 +27,7 @@
     console.log(minors);
 
     var table = $('<table></table>').attr("cellspacing",1);
-    var tr = $("<tr><th></th><th>Cash</th></tr>");
+    var tr = $("<tr><th></th><th></th></tr>");
     for (var p in colors)
       tr.append('<th>'+colors[p]+'</th>');
     table.append(tr);
@@ -38,10 +38,11 @@
 //      tr.append('<td>'+this.model.board.getHotelChainSize(colors[p])+'</td>');
 //    table.append(tr);
 
+    //各プレイヤーの株券の枚数
     for (var i = 0; i < this.model.players.length; i++) {
       tr = $("<tr></tr>");
       tr.append('<td>'+i+'</td>');
-      tr.append('<td>'+this.model.players[i].cash+'</td>');
+      tr.append('<td>$'+this.model.players[i].cash+'</td>');
       for (var p in colors) {
         var x = this.model.players[i].stocks[colors[p]];
         var td = $('<td>'+x+'</td>');
@@ -52,11 +53,20 @@
       table.append(tr);
     }
 
+    //株券の残り枚数
     tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
     }
     table.append(tr);
+
+    //株券の価格
+    tr = $('<tr><td></td><td></td></tr>');
+    for (var p in colors) {
+      tr.append('<td>$'+this.model.price(colors[p])+'</td>');
+    }
+    table.append(tr);
+
     $(this.id).html(table);
     return table;
   }
