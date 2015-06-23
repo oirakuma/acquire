@@ -15,6 +15,15 @@
     return tr;
   }
 
+  //ホテルチェーンのサイズ
+  StockTableView.prototype.createChainSizes = function() {
+    var tr = $('<tr><td></td><td></td></tr>');
+    for (var p in colors) {
+      tr.append('<td>'+this.model.board.getHotelChainSize(colors[p])+'</td>');
+    }
+    return tr;
+  }
+
   StockTableView.prototype.render = function() {
     var self = this;
 
@@ -69,6 +78,7 @@
 //    }
 //    table.append(tr);
 
+    table.append(this.createChainSizes());
     table.append(this.createStockPrices());
 
     $(this.id).html(table);
