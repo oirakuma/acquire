@@ -18,6 +18,7 @@
     this.model.board.putTile(name, id);
     setTimeout(function(){
       tilesView.render();
+      stockTableView.render();
     }, 0);
   
     //==== 1-3のどの場合にも最後に ai.purchasePhase が実行される ====
