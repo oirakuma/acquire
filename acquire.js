@@ -110,22 +110,51 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     console.log(color);
     for (var i = 0; i < this.players.length; i++) {
       console.log(this.players[i].stocks);
-      h[i] = this.players[i].stocks[color];
+      var x = this.players[i].stocks[color];
+      if (x > 0)
+        h[i] = x;
     }
     console.log(h);
-    return sortHashByValue(h).map(function(x){
-      return x[0];
-    });
+    return sortHashByValue(h);
   }
 
   Acquire.prototype.shareToStockholders = function() {
     //株主への配当
-    var stockholders = this.getStockholders(this.board.merged);
-    console.log("stockholders", stockholders);
-    this.players[stockholders[0]].cash += this.getShare(this.board.merged);
-    this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
-    logView.info(this.getShare(this.board.merged)+" shared to id:"+stockholders[0]);
-    logView.info((this.getShare(this.board.merged)/2)+" shared to id:"+stockholders[1]);
+    var major = this.getShare(this.board.merged);
+    var minor = major/2;
+
+    var a = this.getStockholders(this.board.merged);
+    console.log("stockholders", a);
+
+    var self = this;
+    function share(id, value) {
+      self.players[id].cash += value;
+      logView.append(id, 'was shared '+value+'.');
+    }
+ 
+    if (a.length == 0) {
+      ;
+    } else if (a.length == 1) {
+      this.players[a[0][0]].cash += major;
+    } else {
+      //筆頭株主が2人
+      if (a[0][1] == a[1][1]) {
+        share(a[0][0], (major+minor)/2);
+        share(a[1][0], (major+minor)/2);
+      } else {
+        //第２株主が2人
+        if (a.length >= 3 && a[1][1] == a[2][1]) {
+          share(a[0][0], major);
+          share(a[1][0], minor/2);
+          share(a[2][0], minor/2);
+        //通常
+        } else {
+          share(a[0][0], major);
+          share(a[1][0], minor);
+        }
+      }
+    }
+
     setTimeout(function(){
       stockTableView.render();
     }, 0);
@@ -207,8 +236,9 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 
   Acquire.prototype.sellAll = function() {
     for (var i = 0; i < this.players.length; i++) {
-      for (var p in this.players.stocks) {
-        this.players.cash += this.players.stocks[p]*this.price(p);
+      for (var p in this.players[i].stocks) {
+        this.players[i].cash += this.players[i].stocks[p]*this.price(p);
+        this.players[i].stocks[p] = 0;
       }
     }
   }
