@@ -39,11 +39,11 @@
   }
   
   Board.prototype.getName = function(name, vx, vy) {
-    var n = parseInt(name[0]);
-    var c = indexOfChar(name[1]);
+    var n = parseInt(name);
+    var c = indexOfChar(name[name.length-1]);
     n += vx;
     c += vy;
-    if (n < 1 || n > 9 || c < 0 || c >= 12) return null;
+    if (n < 1 || n > 12 || c < 0 || c >= 9) return null;
     return n+chars[c];
   }
   

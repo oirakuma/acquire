@@ -35,7 +35,7 @@
     function next() {
       if (self.model.isGameEnd()) {
         self.model.sellAll();
-        $("#chain-markers").html("<h3>Game End</h3>");
+        $("#chain-markers").html("<h2>Game End</h2>");
         setTimeout(function(){
           stockTableView.render();
         }, 0);
@@ -62,9 +62,9 @@
 
   TilesView.prototype.render = function() {
     var table = $("<table></table>").attr("cellspacing",1);
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < 9; i++) {
       var tr = $("<tr></tr>");
-      for (var j = 0; j < 9; j++)
+      for (var j = 0; j < 12; j++)
         tr.append(this.createTile((j+1)+chars[i]));
       table.append(tr);
     }

@@ -31,8 +31,8 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 
   function createTiles() {
     var ts = [];
-    for (var i = 0; i < 12; i++) {
-      for (var j = 0; j < 9; j++)
+    for (var i = 0; i < 9; i++) {
+      for (var j = 0; j < 12; j++)
         ts.push((j+1)+chars[i]);
     }
     return ts;

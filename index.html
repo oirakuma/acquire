@@ -7,12 +7,20 @@
 body, td, th {
   font-size: small;
 }
-h1, h3 {
+h1, h2 {
   text-align: center;
+}
+h3 {
+  margin: 0;
+  padding: 0;
 }
 table {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
+}
+#log {
+  height: 6em;
+  overflow-y: scroll;
 }
 #tiles td {
   color: gray;
@@ -45,26 +53,12 @@ table {
   </div>
 
   <div data-role="page" id="one">
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#one" class="ui-btn-active">Main</a></li>
-        <li><a href="#log">Log</a></li>
-      </ul>
-    </div>
     <div id="tiles"></div>
     <div id="stocks"></div>
+    <div id="log"></div>
     <div id="chain-markers"></div>
     <div id="purchase"></div>
     <div id="merged"></div>
-  </div>
-
-  <div data-role="page" id="log">
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#one">Main</a></li>
-        <li><a href="#log" class="ui-btn-active">Log</a></li>
-      </ul>
-    </div>
   </div>
 
   <div data-role="page" id="two">
