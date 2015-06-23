@@ -6,11 +6,6 @@
     this.id = option.id;
   }
 
-//  TilesView.prototype.mergedOption = function() {
-//    var view = new MergedView({model:this.model,el:"#merged"});
-//    return view.render();
-//  }
-
   TilesView.prototype.selectHotelChainColor = function() {
     var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
     return view.render();
@@ -25,8 +20,10 @@
     var td = $('<td></td>').addClass(name).text(name);
     td.click(function(){
       self.name = $(this).text();
-      var action = new Action(self.model);
-      action.start(0, self);
+      if (self.model.canPut(0, self.name)) {
+        var action = new Action(self.model);
+        action.start(0, self);
+      }
     });
     return td;
   }

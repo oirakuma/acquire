@@ -48,6 +48,15 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players[id].tiles.push(this.getTile());
   }
 
+  Acquire.prototype.canPut = function(id, name) {
+    if (this.board.tiles[name]) return false;
+    for (var i = 0; i < this.players[id].tiles.length; i++) {
+      if (this.players[id].tiles[i] == name)
+        return true;
+    }
+    return false;
+  }
+
   Acquire.prototype.getTile = function() {
     return this.tiles.shift();
   }
