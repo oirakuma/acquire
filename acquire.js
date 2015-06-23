@@ -118,9 +118,7 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     });
   }
 
-  Acquire.prototype.merge = function() {
-    //チェーンマーカーを返す。
-    chainMarkers[this.board.merged] = false;
+  Acquire.prototype.shareToStockholders = function() {
     //株主への配当
     var stockholders = this.getStockholders(this.board.merged);
     console.log("stockholders", stockholders);
@@ -128,11 +126,17 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
     logView.info(this.getShare(this.board.merged)+" shared to id:"+stockholders[0]);
     logView.info((this.getShare(this.board.merged)/2)+" shared to id:"+stockholders[1]);
-    //ボードを更新する
-    this.board.merge();
-    //ビューを再描画する
     setTimeout(function(){
       stockTableView.render();
+    }, 0);
+  }
+
+  Acquire.prototype.merge = function() {
+    //チェーンマーカーを返す。
+    chainMarkers[this.board.merged] = false;
+    //タイルの色を更新する
+    this.board.merge();
+    setTimeout(function(){
       tilesView.render();
     }, 0);
   }

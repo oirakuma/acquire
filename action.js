@@ -24,6 +24,7 @@
 
     //1) 吸収合併が発生
     if (this.model.board.isHotelMerged(name)) {
+      this.model.shareToStockholders();
       this.mergedOption().then(function(){
         ai.model.merge();
         ai.purchasePhase(id);
