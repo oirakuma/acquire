@@ -12,10 +12,9 @@
 
     function createChainMarker(color) {
       var a = createButton().css("background-color",color);
-//      a.text(self.model.price(color));
       a.click(function(){
         if (count >= 3) {
-          alert("You can purchase 3");
+          alert("You can't purchase over 3.");
           return;
         }
         count++;
@@ -31,7 +30,7 @@
     });
 
     return new Promise(function(resolve){
-      var a = createButton().text("Done").addClass("ui-mini");
+      var a = createButton().text("Done");
       a.click(function(){
         $(self.el).empty();
         resolve("OK");
