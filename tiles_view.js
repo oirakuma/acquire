@@ -6,6 +6,10 @@
     this.id = option.id;
   }
 
+  TilesView.prototype.start = function() {
+    $("#chain-markers").html("<h3>Your turn.</h3>");
+  }
+
   TilesView.prototype.selectHotelChainColor = function() {
     var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
     return view.render();
@@ -21,6 +25,7 @@
     td.click(function(){
       self.name = $(this).text();
       if (self.model.canPut(0, self.name)) {
+        $("#chain-markers").html("");
         var action = new Action(self.model);
         action.start(0, self);
       }
@@ -35,7 +40,7 @@
     function next() {
       if (self.model.isGameEnd()) {
         self.model.sellAll();
-        $("#chain-markers").html("<h2>Game End</h2>");
+        $("#chain-markers").empty();
         setTimeout(function(){
           stockTableView.render();
         }, 0);

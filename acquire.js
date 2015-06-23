@@ -288,4 +288,5 @@ $(document).ready(function(){
   stockTableView.render();
   tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
+  tilesView.start();
 });

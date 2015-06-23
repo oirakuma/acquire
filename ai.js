@@ -44,6 +44,8 @@
         var action = new Action(self.model);
         action.start(id+1, self);
       }, 1000);
+    } else {
+      tilesView.start();
     }
   }
 })(this.self);
