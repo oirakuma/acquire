@@ -15,24 +15,30 @@
     this.model.eachChainMarker(function(color){
       selectedColor = color;
     });
+    this.chainCreated = selectedColor;
     return new Promise(function(resolve){
       resolve(selectedColor);
     });
   }
 
   ComputerAI.prototype.purchasePhase = function(id) {
-    //株券をとりあえずランダムに購入する
-    var selectedColor = null;
-    this.model.eachChain(function(color){
-      if (Math.floor(Math.random()*3) == 0)
-        selectedColor = color;
-    });
-    if (selectedColor) {
-      this.model.purchaseStock(id, selectedColor);
-      setTimeout(function(){
-        stockTableView.render();
-      }, 0);
+    //新規チェーンを作成したならそこの株券を3枚購入する。
+    if (this.chainCreated) {
+      for (var i = 0; i < 3; i++)
+        this.model.purchaseStock(id, this.chainCreated);
+    //そうでないなら株券をランダムに購入するかもしれない
+    } else {
+      var selectedColor = null;
+      this.model.eachChain(function(color){
+        if (Math.floor(Math.random()*3) == 0)
+          selectedColor = color;
+      });
+      if (selectedColor)
+        this.model.purchaseStock(id, selectedColor);
     }
+    setTimeout(function(){
+      stockTableView.render();
+    }, 0);
 
     //タイルを1枚引く
     this.model.pushTile(id);
