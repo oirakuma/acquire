@@ -3,11 +3,18 @@
 
 //  var gray = 'rgb(128, 128, 128)';
   var gray = 'gray';
-  var lightgray = 'rgb(211, 211, 211)';
+  var lightgray = 'lightgray';
 
   function Board() {
     //ex) tiles["3G"] = "red"
     this.tiles = {};
+  }
+
+  function eachDirection(f) {
+    var vx = [1, -1, 0,  0];
+    var vy = [0,  0, 1, -1];
+    for (var i = 0; i < vx.length; i++)
+      f(vx[i], vy[i]);
   }
 
   Board.prototype.getColor = function(name) {
@@ -148,5 +155,20 @@
     }
     if (expanded) return false;
     return hoteled;
+  }
+
+  Board.prototype.toBeChain = function(name) {
+    var self = this;
+    var colors = {};
+    var count = 0;
+    eachDirection(function(vx, vy){
+      var color = self.getColor(self.getName(name, vx, vy));
+      if (color && color != lightgray) {
+        colors[color] = true;
+        count++;
+      }
+    });
+    console.log(colors);
+    return (colors["gray"] && count == 1);
   }
 })(this.self);
