@@ -30,7 +30,7 @@
     $(this.el).append(a);
     return new Promise(function(resolve){
       a.click(function(){
-        $(this.el).empty();
+        $(self.el).empty();
         resolve();
       });
     });

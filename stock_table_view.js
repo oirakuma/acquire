@@ -6,6 +6,15 @@
     this.id = option.id;
   }
 
+  //株券の価格
+  StockTableView.prototype.createStockPrices = function() {
+    var tr = $('<tr><td></td><td></td></tr>');
+    for (var p in colors) {
+      tr.append('<td>$'+this.model.price(colors[p])+'</td>');
+    }
+    return tr;
+  }
+
   StockTableView.prototype.render = function() {
     var self = this;
 
@@ -54,18 +63,13 @@
     }
 
     //株券の残り枚数
-    tr = $('<tr><td></td><td></td></tr>');
-    for (var p in colors) {
-      tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
-    }
-    table.append(tr);
+//    tr = $('<tr><td></td><td></td></tr>');
+//    for (var p in colors) {
+//      tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
+//    }
+//    table.append(tr);
 
-    //株券の価格
-    tr = $('<tr><td></td><td></td></tr>');
-    for (var p in colors) {
-      tr.append('<td>$'+this.model.price(colors[p])+'</td>');
-    }
-    table.append(tr);
+    table.append(this.createStockPrices());
 
     $(this.id).html(table);
     return table;

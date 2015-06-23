@@ -6,10 +6,10 @@
     this.id = option.id;
   }
 
-  TilesView.prototype.mergedOption = function() {
-    var view = new MergedView({model:this.model,el:"#merged"});
-    return view.render();
-  }
+//  TilesView.prototype.mergedOption = function() {
+//    var view = new MergedView({model:this.model,el:"#merged"});
+//    return view.render();
+//  }
 
   TilesView.prototype.selectHotelChainColor = function() {
     var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
@@ -34,14 +34,33 @@
   //購入フェーズ
   TilesView.prototype.purchasePhase = function(id) {
     var self = this;
-    var view = new PurchaseView({model:this.model, el:"#purchase"});
-    view.render().then(function(){
+
+    function next() {
+      if (self.model.isGameEnd()) {
+        self.model.sellAll();
+        $("#chain-markers").html("<h3>Game End</h3>");
+        setTimeout(function(){
+          stockTableView.render();
+        }, 0);
+        return;
+      }
+      self.model.pushTile(0);
+      setTimeout(function(){
+        tilesView.render();
+      }, 0);
       setTimeout(function(){
         var action = new Action(self.model);
         var ai = new ComputerAI(self.model);
         action.start(id+1, ai);
       }, 1000);
-    });
+    }
+
+    if (self.model.countChain() > 0) {
+      var view = new PurchaseView({model:self.model, el:"#purchase"});
+      view.render().then(next);
+    } else {
+      next();
+    }
   }
 
   TilesView.prototype.render = function() {

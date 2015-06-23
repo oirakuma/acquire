@@ -7,15 +7,12 @@
 body, td, th {
   font-size: small;
 }
-h1 {
+h1, h3 {
   text-align: center;
 }
 table {
   width: 100%;
   max-width: 600px;
-}
-#log {
-  overflow-y: scroll;
 }
 #tiles td {
   color: gray;
@@ -43,6 +40,7 @@ table {
   <div data-role="page" id="top">
     <h1>Acquire</h1>
     <a href="#one" class="ui-btn">Game Start</a>
+    <a href="#two" class="ui-btn">Stock Price Table</a>
     <a href="#setting" class="ui-btn">Setting</a>
   </div>
 
@@ -50,7 +48,6 @@ table {
     <div data-role="navbar">
       <ul>
         <li><a href="#one" class="ui-btn-active">Main</a></li>
-        <li><a href="#two">Stock Price Table</a></li>
         <li><a href="#log">Log</a></li>
       </ul>
     </div>
@@ -65,20 +62,12 @@ table {
     <div data-role="navbar">
       <ul>
         <li><a href="#one">Main</a></li>
-        <li><a href="#two">Stock Price Table</a></li>
         <li><a href="#log" class="ui-btn-active">Log</a></li>
       </ul>
     </div>
   </div>
 
   <div data-role="page" id="two">
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#one">Main</a></li>
-        <li><a href="#two" class="ui-btn-active">Stock Price Table</a></li>
-        <li><a href="#log">Log</a></li>
-      </ul>
-    </div>
     <table border=1 cellspacing=1>
       <tr>
         <th>Red<br>Yellow</th>
@@ -177,10 +166,11 @@ table {
         <td>6,000</td>
       </tr>
     </table>
+    <a href="#top" class="ui-btn">OK</a>
   </div>
 
   <div data-role="page" id="setting">
-    <a href="#top" class="ui-btn">Back</a>
+    <a href="#top" class="ui-btn">OK</a>
   </div>
 </div>
 

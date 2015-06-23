@@ -119,7 +119,6 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
   }
 
   Acquire.prototype.merge = function() {
-    this.board.merge();
     //チェーンマーカーを返す。
     chainMarkers[this.board.merged] = false;
     //株主への配当
@@ -127,15 +126,23 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     console.log("stockholders", stockholders);
     this.players[stockholders[0]].cash += this.getShare(this.board.merged);
     this.players[stockholders[1]].cash += this.getShare(this.board.merged)/2;
-    stockTableView.render();
-    tilesView.render();
-
     logView.info(this.getShare(this.board.merged)+" shared to id:"+stockholders[0]);
     logView.info((this.getShare(this.board.merged)/2)+" shared to id:"+stockholders[1]);
+    //ボードを更新する
+    this.board.merge();
+    //ビューを再描画する
+    setTimeout(function(){
+      stockTableView.render();
+      tilesView.render();
+    }, 0);
   }
 
-  Acquire.prototype.takeChainMarker = function(color) {
-    chainMarkers[color] = true;
+  Acquire.prototype.countChain = function() {
+    var count = 0;
+    this.eachChain(function(){
+      count++;
+    });
+    return count;
   }
 
   //ホテルチェーンになっているカラーに対して
@@ -200,6 +207,23 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
         this.players.cash += this.players.stocks[p]*this.price(p);
       }
     }
+  }
+
+  Acquire.prototype.isGameEnd = function() {
+    //41を越えるホテルチェーンができていればゲーム終了
+    var self = this;
+    var b = false;
+    this.eachChain(function(color){
+      if (self.board.getHotelChainSize(color) >= 41)
+        b = true;
+    });
+    if (b) return true;
+    //すべてのホテルチェーンが11以上ならゲーム終了
+    for (var p in colors) {
+      if (self.board.getHotelChainSize(colors[p]) < 11)
+        return false;
+    }
+    return true;
   }
 
   function Player() {
