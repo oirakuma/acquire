@@ -22,14 +22,21 @@
   TilesView.prototype.createTile = function(name) {
     var self = this;
     var td = $('<td></td>').addClass(name).text(name);
-    td.click(function(){
-      self.name = $(this).text();
-      if (self.model.canPut(0, self.name)) {
-        $("#chain-markers").html("");
-        var action = new Action(self.model);
-        action.start(0, self);
-      }
+    var myTile = false;
+    this.model.players[0].tiles.map(function(t){
+      if (t == name)
+        myTile = true;
     });
+    if (myTile) {
+      td.click(function(){
+        self.name = $(this).text();
+        if (self.model.canPut(0, self.name)) {
+          $("#chain-markers").html("");
+          var action = new Action(self.model);
+          action.start(0, self);
+        }
+      });
+    }
     return td;
   }
 

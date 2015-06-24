@@ -49,21 +49,17 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
   }
 
   Acquire.prototype.canPut = function(id, name) {
-    //既にタイルが置かれている場所には置けない。
-    if (this.board.tiles[name]) return false;
-
-    //プレイヤーの手持ちタイルかどうか。
-    var b = false;
-    this.players[id].tiles.map(function(t){
-      if (t == name)
-        b = true;
-    });
-    if (!b) return false;
-
+    var result = true;
+    this.board.putTile(name);
+    if (this.board.isHotelMerged(name)) {
+      if (this.board.getHotelChainSize(this.board.merged) >= 11)
+        result = false;
     //チェーンマーカーが残っていないときは新規チェーンを形成するタイルは置けない
-    if (this.countChain() == 7 && this.board.toBeChain(name))
-      return false;
-    return true;
+    } else if (this.board.checkChain(name) && this.countChain() == 7) {
+      result = false;
+    }
+    this.board.removeTile(name);
+    return result;
   }
 
   Acquire.prototype.getTile = function() {

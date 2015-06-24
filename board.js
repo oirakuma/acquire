@@ -24,7 +24,12 @@
 
   Board.prototype.putTile = function(name, id) {
     this.tiles[name] = "gray";
-    logView.append(id, 'placed a tile on '+name+'.');
+    if (id)
+      logView.append(id, 'placed a tile on '+name+'.');
+  }
+
+  Board.prototype.removeTile = function(name) {
+    this.tiles[name] = null;
   }
 
   //隣接するホテルの色も変更する

@@ -6,7 +6,13 @@
   }
 
   ComputerAI.prototype.getMove = function(id) {
-    return this.model.players[id].tiles.shift();
+    for (var i = 0; i < this.model.players[id].tiles.length; i++) {
+      var name = this.model.players[id].tiles[i];
+      if (this.model.canPut(id, name))
+        return this.model.players[id].tiles.splice(i, 1)[0];
+    }
+    console.log("ERROR!");
+    return null;
   }
 
   ComputerAI.prototype.selectHotelChainColor = function() {
