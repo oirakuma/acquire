@@ -16,9 +16,9 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     this.players = [];
     for (var i = 0; i < 4; i++)
       this.players[i] = new Player();
-    for (var i = 0; i < this.players.length; i++) {
-      for (var j = 0; j < 6; j++)
-        this.players[i].tiles.push(this.getTile());
+    for (var i = 0; i < 6; i++) {
+      for (var j = 0; j < this.players.length; j++)
+        this.players[j].tiles.push(this.getTile());
     }
     //chainMarkers
     for (var p in colors)
