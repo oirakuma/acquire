@@ -1,6 +1,9 @@
 class Game < ActiveRecord::Base
   attr_accessible :status
   has_many :users
+  serialize :placed_tiles
+  serialize :chain_markers
+  serialize :tiles
   
   COLORS=["red","yellow","orange","green","blue","purple","cyan"]
   CHARS=["A","B","C","D","E","F","G","H","I","J","K","L"]
@@ -13,31 +16,27 @@ class Game < ActiveRecord::Base
       ('A'..'I').map{|c|
         "#{n}#{c}"
       }
-    }.flatten.sort_by{rand}.to_json
+    }.flatten.sort_by{rand}
 
-    self.placed_tiles = {}.to_json
+    self.placed_tiles = {}
 
     self.chain_markers = Hash.new.tap{|h|
       COLORS.each{|x|
         h[x] = false
       }
-    }.to_json
+    }
   end
 
   def start
-    tiles = JSON.parse(self.tiles)
     self.users.each{|u|
-      u.tiles = tiles.slice!(0,6).to_json
+      u.tiles = self.tiles.slice!(0,6)
       u.save
     }
-    self.tiles = tiles.to_json
     self.status = 1
   end
 
   def put_tile(name)
-    placed_tiles = JSON.parse(self.placed_tiles)
-    placed_tiles[name] = "gray"
-    self.placed_tiles = placed_tiles.to_json
+    self.placed_tiles[name] = "gray"
     if hotel_merged?(name)
       return "merged"
     end
@@ -67,46 +66,34 @@ class Game < ActiveRecord::Base
   end
 
   def next_user
-    tiles = JSON.parse(self.tiles)
     u = current_user
-    u.tiles << tiles.shift
-    u.tiles = u.tiles.to_json
-    u.stocks = u.stocks.to_json
+    u.tiles << self.tiles.shift
     u.save
-    self.tiles = tiles.to_json
     self.current_user_id += 1
     self.current_user_id = self.current_user_id % self.users.size
   end
 
   def build_chain(name, color)
     set_color(name, color)
-    chain_markers = JSON.parse(self.chain_markers)
-    chain_markers[color] = true
-    self.chain_markers = chain_markers.to_json
+    self.chain_markers[color] = true
     u = current_user
     u.stocks[color] += 1
-    u.stocks = u.stocks.to_json
-    u.tiles = u.tiles.to_json
     u.save
   end
 
   def merge
-    tiles = JSON.parse(self.placed_tiles)
-    tiles[self.name] = self.merger
+    self.placed_tiles[self.name] = self.merger
     tiles.select{|k,v|
       v == self.merged
     }.each{|k,v|
       tiles[k] = self.merger
     }
-    self.placed_tiles = tiles.to_json
   end
 
   def purchase_stock(color)
     u = current_user
     u.stocks[color] += 1
     u.cash -= get_price(color)
-    u.stocks = u.stocks.to_json
-    u.tiles = u.tiles.to_json
     u.save
   end
 
@@ -136,51 +123,9 @@ class Game < ActiveRecord::Base
         1000
       end
     elsif color == "orange" || color == "green" || color == "blue"
-      case size
-      when 0
-        0
-      when 2
-        300
-      when 3
-        400
-      when 4
-        500
-      when 5
-        600
-      when 6..10
-        700
-      when 11..20
-        800
-      when 21..30
-        900
-      when 31..40
-        1000
-      else
-        1100
-      end
+      size == 0 ? 0 : 100+get_price("red")
     elsif color == "purple" || color == "cyan"
-      case size
-      when 0
-        0
-      when 2
-        400
-      when 3
-        500
-      when 4
-        600
-      when 5
-        700
-      when 6..10
-        800
-      when 11..20
-        900
-      when 21..30
-        1000
-      when 31..40
-        1100
-      else
-        1200
-      end
+      size == 0 ? 0 : 200+get_price("red")
     end
   end
 
@@ -208,8 +153,6 @@ class Game < ActiveRecord::Base
   def sell
     u = current_user
     u.stocks[self.merged] -= 1
-    u.stocks = u.stocks.to_json
-    u.tiles = u.tiles.to_json
     u.cash += get_price(self.merged)
     u.save
   end
@@ -218,25 +161,18 @@ class Game < ActiveRecord::Base
     u = current_user
     u.stocks[self.merged] -= 2
     u.stocks[self.merger] += 2
-    u.stocks = u.stocks.to_json
-    u.tiles = u.tiles.to_json
     u.save
   end
 
 private
 
   def current_user
-    u = self.users[self.current_user_id]
-    u.stocks = JSON.parse(u.stocks)
-    u.tiles = JSON.parse(u.tiles)
-    u
+    self.users[self.current_user_id]
   end
 
   def set_color(name, color)
     if get_color(name) == "gray"
-      tiles = JSON.parse(self.placed_tiles)
-      tiles[name] = color
-      self.placed_tiles = tiles.to_json
+      self.placed_tiles[name] = color
       VECTORS.each{|vx,vy|
         set_color(get_name(name, vx, vy), color)
       }
@@ -260,8 +196,7 @@ private
   end
 
   def get_color(name)
-    placed_tiles = JSON.parse(self.placed_tiles)
-    placed_tiles[name]
+    self.placed_tiles[name]
   end
 
   def hotel_chain?(name)
@@ -273,7 +208,7 @@ private
   end
 
   def get_hotel_chain_size(color)
-    JSON.parse(self.placed_tiles).select{|k,v|
+    self.placed_tiles.select{|k,v|
       v == color
     }.size
   end
