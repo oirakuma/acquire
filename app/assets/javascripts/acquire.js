@@ -1,5 +1,5 @@
-var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 var colors = ["red","yellow","orange","green","blue","purple","cyan"];
+var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
 //model
 (function(global){
@@ -7,26 +7,13 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 
   var chainMarkers = {};
 
-  function Acquire() {
-    //tiles
-    this.tiles = shuffle(shuffle(createTiles()));
-    //board
-    this.board = new Board();
-    //players
-    this.players = [];
-    for (var i = 0; i < 4; i++)
-      this.players[i] = new Player();
-    for (var i = 0; i < 6; i++) {
-      for (var j = 0; j < this.players.length; j++)
-        this.players[j].tiles.push(this.getTile());
-    }
-    //chainMarkers
-    for (var p in colors)
-      chainMarkers[colors[p]] = false;
-    //stocks
-    this.stocks = {};
-    for (var p in colors)
-      this.stocks[colors[p]] = 25;
+  function Acquire(game) {
+    this.tiles = JSON.parse(game.tiles);
+    this.board = new Board(JSON.parse(game.placed_tiles));
+    this.players = game.users.map(function(u){
+      return new Player(u);
+    });
+    chainMarkers = JSON.parse(game.chain_markers);
   }
 
   function createTiles() {
@@ -45,7 +32,7 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
   }
 
   Acquire.prototype.pushTile = function(id) {
-    this.players[id].tiles.push(this.getTile());
+//    this.players[id].tiles.push(this.getTile());
   }
 
   Acquire.prototype.canPut = function(id, name) {
@@ -274,24 +261,48 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
     return true;
   }
 
-  function Player() {
-    this.cash = 6000;
-    this.stocks = {};
-    this.tiles = [];
-    for (var p in colors)
-      this.stocks[colors[p]] = 0;
+  function Player(user) {
+    for (var p in user)
+      this[p] = user[p];
+    if (this.tiles)
+      this.tiles = JSON.parse(this.tiles);
   }
 })(this.self);
 
-var stockTableView = null;
-var purchaseView = null;
-var tilesView = null;
-var logView = new LogView({el:"#log"});
-$(document).ready(function(){
-  var acquire = new Acquire();
+function start(game) {
+  var acquire = new Acquire(game);
   stockTableView = new StockTableView({model:acquire,id:"#stocks"});
   stockTableView.render();
   tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
   tilesView.start();
-});
+
+/*  setInterval(function(){
+    $.ajax({
+      url: "/games/1.json",
+      success: function(game) {
+        stockTableView.render();
+        tilesView.render(game);
+      }
+    });
+  }, 2000);*/
+}
+
+var stockTableView = null;
+var purchaseView = null;
+var tilesView = null;
+var logView = new LogView({el:"#log"});
+var userId = null;
+var game = null;
+
+function checkGameUsers() {
+  $.ajax({
+    url: "/games/1.json",
+    success: function(game) {
+      window.game = game;
+      start(game);
+    }
+  });
+}
+
+checkGameUsers();

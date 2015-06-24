@@ -1,0 +1,38 @@
+body, td, th {
+  font-size: small;
+}
+h1, h2 {
+  text-align: center;
+}
+h3 {
+  margin: 0;
+  padding: 0;
+}
+table {
+  width: 100%;
+  max-width: 800px;
+}
+#log {
+  height: 6em;
+  overflow-y: scroll;
+}
+#tiles td {
+  color: gray;
+  height: 20px;
+  width: 20px;
+  background-color: lightgray;
+  border: 1px outset lightgray;
+  text-align: center;
+  vertical-align: middle;
+  empty-cells: show;
+}
+#stocks td {
+  text-align: right;
+}
+#stocks td,th {
+  border-right: 1px solid gray;
+  border-bottom: 1px solid gray;
+}
+#two td {
+  text-align: right;
+}

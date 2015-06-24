@@ -19,24 +19,57 @@
     return this.name;
   }
 
+  function putTile(name) {
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1/put_tile.json",
+        type: "POST",
+        data: "name="+name,
+        success: function(game){
+          resolve(game);
+        }
+      });
+    });
+  }
+
+  function buildChain(name, color) {
+    return new Promise(function(resolve){
+      var data = [
+        "name="+name,
+        "color="+color
+      ].join("&");
+      $.ajax({
+        url: "/games/1/build_chain.json",
+        type: "POST",
+        data: data,
+        success: function(game){
+          resolve(game);
+        }
+      });
+    });
+  }
+
   TilesView.prototype.createTile = function(name) {
     var self = this;
     var td = $('<td></td>').addClass(name).text(name);
-    var myTile = false;
-    this.model.players[0].tiles.map(function(t){
-      if (t == name)
-        myTile = true;
+    td.click(function(){
+      self.name = $(this).text();
+      if (true) {
+        $("#chain-markers").html("");
+        putTile(name).then(function(game){
+          tilesView.render(game);
+          if (game.result) {
+            self.selectHotelChainColor().then(function(color){
+              buildChain(name, color).then(function(game){
+                self.purchasePhase(game.user_id);
+              });
+            });
+          } else {
+            self.purchasePhase(game.user_id);
+          }
+        });
+      }
     });
-    if (myTile) {
-      td.click(function(){
-        self.name = $(this).text();
-        if (self.model.canPut(0, self.name)) {
-          $("#chain-markers").html("");
-          var action = new Action(self.model);
-          action.start(0, self);
-        }
-      });
-    }
     return td;
   }
 
@@ -53,15 +86,14 @@
         }, 0);
         return;
       }
-      self.model.pushTile(0);
       setTimeout(function(){
         tilesView.render();
       }, 0);
-      setTimeout(function(){
-        var action = new Action(self.model);
-        var ai = new ComputerAI(self.model);
-        action.start(id+1, ai);
-      }, 1000);
+//      setTimeout(function(){
+//        var action = new Action(self.model);
+//        var ai = new ComputerAI(self.model);
+//        action.start(id+1, ai);
+//      }, 1000);
     }
 
     if (self.model.countChain() > 0) {
@@ -72,7 +104,9 @@
     }
   }
 
-  TilesView.prototype.render = function() {
+  TilesView.prototype.render = function(game) {
+    if (!game) game = window.game;
+
     var table = $("<table></table>").attr("cellspacing",1);
     for (var i = 0; i < 9; i++) {
       var tr = $("<tr></tr>");
@@ -82,18 +116,18 @@
     }
 
     //タイルが置かれているエリアの色を変更する
-    for (var p in this.model.board.tiles) {
+    var tiles = JSON.parse(game.placed_tiles);
+    for (var p in tiles) {
       var td = table.find("."+p);
-      td.css("background-color", this.model.board.tiles[p]);
-      td.css("border", "1px outset "+this.model.board.tiles[p]);
+      td.css("background-color", tiles[p]);
+      td.css("border", "1px outset "+tiles[p]);
       td.text("");
     }
 
     //プレイヤーのタイルを強調する
-    for (var i = 0; i < this.model.players[0].tiles.length; i++) {
-      var name = this.model.players[0].tiles[i];
+    JSON.parse(game.users[game.user_id].tiles).map(function(name){
       table.find("."+name).css("color", "orange").css("font-weight", "bold");
-    }
+    });
     $(this.id).html(table);
   }
 })(this.self);

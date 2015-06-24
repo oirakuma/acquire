@@ -5,9 +5,9 @@
   var gray = 'gray';
   var lightgray = 'lightgray';
 
-  function Board() {
+  function Board(tiles) {
     //ex) tiles["3G"] = "red"
-    this.tiles = {};
+    this.tiles = tiles;
   }
 
   function eachDirection(f) {
