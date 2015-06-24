@@ -7,9 +7,11 @@ Acquire::Application.routes.draw do
       post :build_chain
       post :purchase_stock
       post :purchase_done
+      post :sell
+      post :trade
+      post :merge_done
     end
   end
-
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

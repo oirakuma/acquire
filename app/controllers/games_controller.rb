@@ -93,8 +93,7 @@ class GamesController < ApplicationController
 
   def put_tile
     g = Game.find(params[:id])
-    chained = g.put_tile(params[:name])
-    g.result = chained
+    g.result = g.put_tile(params[:name])
     g.save
     render_json(g)
   end
@@ -116,6 +115,27 @@ class GamesController < ApplicationController
   def purchase_done
     g = Game.find(params[:id])
     g.next_user
+    g.save
+    render_json(g)
+  end
+
+  def sell
+    g = Game.find(params[:id])
+    g.sell
+    g.save
+    render_json(g)
+  end
+
+  def trade
+    g = Game.find(params[:id])
+    g.trade
+    g.save
+    render_json(g)
+  end
+
+  def merge_done
+    g = Game.find(params[:id])
+    g.merge
     g.save
     render_json(g)
   end

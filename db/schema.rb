@@ -15,9 +15,12 @@ ActiveRecord::Schema.define(:version => 20150624045642) do
 
   create_table "games", :force => true do |t|
     t.integer  "status"
-    t.integer  "result"
     t.integer  "user_id"
     t.integer  "current_user_id"
+    t.string   "result"
+    t.string   "name"
+    t.string   "merger"
+    t.string   "merged"
     t.text     "tiles"
     t.text     "placed_tiles"
     t.text     "chain_markers"

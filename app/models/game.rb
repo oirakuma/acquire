@@ -4,6 +4,7 @@ class Game < ActiveRecord::Base
   
   COLORS=["red","yellow","orange","green","blue","purple","cyan"]
   CHARS=["A","B","C","D","E","F","G","H","I","J","K","L"]
+  VECTORS=[1, -1, 0,  0].zip([0,  0, 1, -1])
 
   before_create do
     self.status = 0
@@ -37,29 +38,31 @@ class Game < ActiveRecord::Base
     placed_tiles = JSON.parse(self.placed_tiles)
     placed_tiles[name] = "gray"
     self.placed_tiles = placed_tiles.to_json
+    if hotel_merged?(name)
+      return "merged"
+    end
 
     color1 = get_color(name)
     color2 = nil
-    vxs = [1, -1, 0,  0];
-    vys = [0,  0, 1, -1];
   
     # 4方向にホテルかホテルチェーンがあるかどうか調べる
     # ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
-    expanded = false;
-    hoteled = false;
-    vxs.zip(vys).map{|vx,vy|
+    expanded = false
+    chained = false
+    VECTORS.map{|vx,vy|
       name2 = get_name(name, vx, vy)
-      if color2 = is_hotel_chain(name2)
+      if color2 = hotel_chain?(name2)
         expanded = true
         set_color(name, color2)
       elsif is_hotel(name2)
-        hoteled = true
+        chained = true
       end
     }
+
     if expanded
-      return false
+      return nil
     else
-      return hoteled
+      return chained ? "chained" : nil
     end
   end
 
@@ -85,6 +88,17 @@ class Game < ActiveRecord::Base
     u.stocks = u.stocks.to_json
     u.tiles = u.tiles.to_json
     u.save
+  end
+
+  def merge
+    tiles = JSON.parse(self.placed_tiles)
+    tiles[self.name] = self.merger
+    tiles.select{|k,v|
+      v == self.merged
+    }.each{|k,v|
+      tiles[k] = self.merger
+    }
+    self.placed_tiles = tiles.to_json
   end
 
   def purchase_stock(color)
@@ -170,6 +184,45 @@ class Game < ActiveRecord::Base
     end
   end
 
+  def hotel_merged?(name)
+    colors = {}
+    # 4方向のホテルチェーンの色を数える。
+    VECTORS.map{|vx,vy|
+      if color = hotel_chain?(get_name(name, vx, vy))
+        colors[color] = true
+      end
+    }
+    if colors.size >= 2
+      colors.keys.each{|k|
+        colors[k] = get_hotel_chain_size(k)
+      }
+      a = colors.sort_by{|k,v|v}.reverse
+      # [["yellow", 7], ["red", 5], ["blue", 3]]
+      self.name = name
+      self.merger = a[0][0]
+      self.merged = a[1][0]
+    end
+    return colors.size >= 2
+  end
+
+  def sell
+    u = current_user
+    u.stocks[self.merged] -= 1
+    u.stocks = u.stocks.to_json
+    u.tiles = u.tiles.to_json
+    u.cash += get_price(self.merged)
+    u.save
+  end
+
+  def trade
+    u = current_user
+    u.stocks[self.merged] -= 2
+    u.stocks[self.merger] += 2
+    u.stocks = u.stocks.to_json
+    u.tiles = u.tiles.to_json
+    u.save
+  end
+
 private
 
   def current_user
@@ -181,13 +234,12 @@ private
 
   def set_color(name, color)
     if get_color(name) == "gray"
-      placed_tiles = JSON.parse(self.placed_tiles)
-      placed_tiles[name] = color
-      self.placed_tiles = placed_tiles.to_json
-      set_color(get_name(name,  1, 0), color)
-      set_color(get_name(name, -1, 0), color)
-      set_color(get_name(name, 0,  1), color)
-      set_color(get_name(name, 0, -1), color)
+      tiles = JSON.parse(self.placed_tiles)
+      tiles[name] = color
+      self.placed_tiles = tiles.to_json
+      VECTORS.each{|vx,vy|
+        set_color(get_name(name, vx, vy), color)
+      }
     end
   end
 
@@ -212,8 +264,8 @@ private
     placed_tiles[name]
   end
 
-  def is_hotel_chain(name)
-    if get_color(name) == "lightgray" || get_color(name) == "gray"
+  def hotel_chain?(name)
+    if !get_color(name) || get_color(name) == "gray"
       return false
     else
       return get_color(name)

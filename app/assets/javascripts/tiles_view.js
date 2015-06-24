@@ -15,6 +15,11 @@
     return view.render();
   }
 
+  TilesView.prototype.mergedOption = function() {
+    var view = new MergedView({model:this.model,el:"#merged"});
+    return view.render();
+  }
+
   TilesView.prototype.getMove = function(id) {
     return this.name;
   }
@@ -29,6 +34,13 @@
           resolve(game);
         }
       });
+    });
+  }
+
+  function mergeDone() {
+    $.ajax({
+      url: "/games/1/merge_done.json",
+      type: "POST"
     });
   }
 
@@ -57,8 +69,14 @@
       if (true) {
         $("#chain-markers").html("");
         putTile(name).then(function(game){
+          window.game = game;
           tilesView.render(game);
-          if (game.result) {
+          if (game.result == "merged") {
+            self.mergedOption().then(function(){
+              mergeDone();
+              self.purchasePhase(game.user_id);
+            });
+          } else if (game.result == "chained") {
             self.selectHotelChainColor().then(function(color){
               buildChain(name, color).then(function(game){
                 self.purchasePhase(game.user_id);

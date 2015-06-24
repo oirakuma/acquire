@@ -15,21 +15,6 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
     chainMarkers = JSON.parse(game.chain_markers);
   }
 
-  function createTiles() {
-    var ts = [];
-    for (var i = 0; i < 9; i++) {
-      for (var j = 0; j < 12; j++)
-        ts.push((j+1)+chars[i]);
-    }
-    return ts;
-  }
- 
-  function shuffle(a) {
-    return a.sort(function(){
-      return Math.random()-0.5;
-    });
-  }
-
   Acquire.prototype.pushTile = function(id) {
 //    this.players[id].tiles.push(this.getTile());
   }
@@ -159,26 +144,27 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
     logView.append(id, "purchased "+color+".");
   }
 
-  Acquire.prototype.buildChain = function(id, name, color) {
-    this.board.setColor(name, color);
-    chainMarkers[color] = true;
-    this.players[id].stocks[color] += 1;
-    this.stocks[color] -= 1;
-
-    logView.append(id, 'has created '+color+' on '+name+'.');
-  }
+//  Acquire.prototype.buildChain = function(id, name, color) {
+//    this.board.setColor(name, color);
+//    chainMarkers[color] = true;
+//    this.players[id].stocks[color] += 1;
+//    this.stocks[color] -= 1;
+//
+//    logView.append(id, 'has created '+color+' on '+name+'.');
+//  }
 
   Acquire.prototype.sell = function(x) {
-    this.players[x].stocks[this.board.merged]--;
-    this.players[x].cash += this.price(this.board.merged);
-    this.stocks[this.board.merged]++;
+    $.ajax({
+      url: "/games/1/sell.json",
+      type: "POST"
+    });
   }
 
   Acquire.prototype.trade = function(x) {
-    this.players[x].stocks[this.board.merged] -= 2;
-    this.players[x].stocks[this.board.merger] += 1;
-    this.stocks[this.board.merged] += 2;
-    this.stocks[this.board.merger] -= 1;
+    $.ajax({
+      url: "/games/1/trade.json",
+      type: "POST"
+    });
   }
 
   Acquire.prototype.sellAll = function() {

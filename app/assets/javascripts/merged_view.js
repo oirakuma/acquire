@@ -7,19 +7,17 @@
   }
 
   MergedView.prototype.render = function() {
-    console.log("merged: "+this.model.board.merged);
-    console.log("merger: "+this.model.board.merger);
     var self = this;
     
     var a = createButton().text("Sell");
-    a.css("background-color", this.model.board.merged);
+    a.css("background-color", game.merged);
     a.click(function(){
       self.model.sell(0);
       stockTableView.render();
     });
     $(this.el).append(a);
 
-    var a = createButton().text("Trade").css("background-color", this.model.board.merged);
+    var a = createButton().text("Trade").css("background-color", game.merged);
     a.click(function(){
       self.model.trade(0);
       stockTableView.render();
