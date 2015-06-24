@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
 
   before_create do
     self.cash = 6000
-    self.tiles = [].to_json
+    self.tiles = []
     self.stocks = Hash.new.tap{|h|
       ["red","yellow","orange","green","blue","purple","cyan"].each{|x|
         h[x] = 0

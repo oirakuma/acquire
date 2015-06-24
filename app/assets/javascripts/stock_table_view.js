@@ -19,7 +19,7 @@
   StockTableView.prototype.createChainSizes = function() {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
-      var tiles = JSON.parse(game.placed_tiles);
+      var tiles = game.placed_tiles;
       var count = 0;
       for (var q in tiles) {
         if (tiles[q] == colors[p])
@@ -70,7 +70,7 @@
       tr.append('<td>'+u.user_id+'</td>');
       tr.append('<td>$'+u.cash+'</td>');
       for (var p in colors) {
-        var x = JSON.parse(u.stocks)[colors[p]];
+        var x = u.stocks[colors[p]];
         var td = $('<td>'+x+'</td>');
         if (x == majors[colors[p]] || x == minors[colors[p]])
           td.css("font-weight", "bold");

@@ -8,11 +8,11 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
   var chainMarkers = {};
 
   function Acquire(game) {
-    this.tiles = JSON.parse(game.tiles);
+    this.tiles = game.tiles;
     this.players = game.users.map(function(u){
       return new Player(u);
     });
-    chainMarkers = JSON.parse(game.chain_markers);
+    chainMarkers = game.chain_markers;
   }
 
   Acquire.prototype.pushTile = function(id) {
@@ -198,8 +198,8 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
     for (var p in user)
       this[p] = user[p];
     if (this.tiles)
-      this.tiles = JSON.parse(this.tiles);
-    this.stocks = JSON.parse(this.stocks);
+      this.tiles = this.tiles;
+    this.stocks = this.stocks;
   }
 })(this.self);
 

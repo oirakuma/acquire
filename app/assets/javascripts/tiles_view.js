@@ -135,7 +135,7 @@
     }
 
     //タイルが置かれているエリアの色を変更する
-    var tiles = JSON.parse(game.placed_tiles);
+    var tiles = game.placed_tiles;
     for (var p in tiles) {
       var td = table.find("."+p);
       td.css("background-color", tiles[p]);
@@ -144,7 +144,7 @@
     }
 
     //プレイヤーのタイルを強調する
-    JSON.parse(game.users[game.user_id].tiles).map(function(name){
+    game.users[game.user_id].tiles.map(function(name){
       table.find("."+name).css("color", "orange").css("font-weight", "bold");
     });
     $(this.id).html(table);
