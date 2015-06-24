@@ -2,6 +2,7 @@ class Game < ActiveRecord::Base
   attr_accessible :status
   has_many :users
   
+  COLORS=["red","yellow","orange","green","blue","purple","cyan"]
   CHARS=["A","B","C","D","E","F","G","H","I","J","K","L"]
 
   before_create do
@@ -16,7 +17,7 @@ class Game < ActiveRecord::Base
     self.placed_tiles = {}.to_json
 
     self.chain_markers = Hash.new.tap{|h|
-      ["red","yellow","orange","green","blue","purple","cyan"].each{|x|
+      COLORS.each{|x|
         h[x] = false
       }
     }.to_json
@@ -95,56 +96,6 @@ class Game < ActiveRecord::Base
     u.save
   end
 
-private
-
-  def current_user
-    u = self.users[self.current_user_id]
-    u.stocks = JSON.parse(u.stocks)
-    u.tiles = JSON.parse(u.tiles)
-    u
-  end
-
-  def set_color(name, color)
-    if get_color(name) == "gray"
-      placed_tiles = JSON.parse(self.placed_tiles)
-      placed_tiles[name] = color
-      self.placed_tiles = placed_tiles.to_json
-      set_color(get_name(name,  1, 0), color)
-      set_color(get_name(name, -1, 0), color)
-      set_color(get_name(name, 0,  1), color)
-      set_color(get_name(name, 0, -1), color)
-    end
-  end
-
-  def get_name(name, vx, vy)
-    n = name.to_i
-    c = CHARS.index(name[-1])
-    n += vx
-    c += vy
-    if n < 1 || n > 12 || c < 0 || c >= 9
-      return nil
-    else
-      return "#{n}#{CHARS[c]}"
-    end
-  end
-
-  def is_hotel(name)
-    get_color(name) == "gray"
-  end
-
-  def get_color(name)
-    placed_tiles = JSON.parse(self.placed_tiles)
-    placed_tiles[name]
-  end
-
-  def is_hotel_chain(name)
-    if get_color(name) == "lightgray" || get_color(name) == "gray"
-      return false
-    else
-      return get_color(name)
-    end
-  end
-
   def get_price(color)
     size = get_hotel_chain_size(color)
     if color == "red" || color == "yellow"
@@ -219,8 +170,58 @@ private
     end
   end
 
+private
+
+  def current_user
+    u = self.users[self.current_user_id]
+    u.stocks = JSON.parse(u.stocks)
+    u.tiles = JSON.parse(u.tiles)
+    u
+  end
+
+  def set_color(name, color)
+    if get_color(name) == "gray"
+      placed_tiles = JSON.parse(self.placed_tiles)
+      placed_tiles[name] = color
+      self.placed_tiles = placed_tiles.to_json
+      set_color(get_name(name,  1, 0), color)
+      set_color(get_name(name, -1, 0), color)
+      set_color(get_name(name, 0,  1), color)
+      set_color(get_name(name, 0, -1), color)
+    end
+  end
+
+  def get_name(name, vx, vy)
+    n = name.to_i
+    c = CHARS.index(name[-1])
+    n += vx
+    c += vy
+    if n < 1 || n > 12 || c < 0 || c >= 9
+      return nil
+    else
+      return "#{n}#{CHARS[c]}"
+    end
+  end
+
+  def is_hotel(name)
+    get_color(name) == "gray"
+  end
+
+  def get_color(name)
+    placed_tiles = JSON.parse(self.placed_tiles)
+    placed_tiles[name]
+  end
+
+  def is_hotel_chain(name)
+    if get_color(name) == "lightgray" || get_color(name) == "gray"
+      return false
+    else
+      return get_color(name)
+    end
+  end
+
   def get_hotel_chain_size(color)
-    JSON.parse(self.tiles).select{|k,v|
+    JSON.parse(self.placed_tiles).select{|k,v|
       v == color
     }.size
   end

@@ -9,7 +9,6 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
   function Acquire(game) {
     this.tiles = JSON.parse(game.tiles);
-    this.board = new Board(JSON.parse(game.placed_tiles));
     this.players = game.users.map(function(u){
       return new Player(u);
     });
@@ -35,63 +34,10 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 //    this.players[id].tiles.push(this.getTile());
   }
 
-  Acquire.prototype.canPut = function(id, name) {
-    var result = true;
-    this.board.putTile(name);
-    if (this.board.isHotelMerged(name)) {
-      if (this.board.getHotelChainSize(this.board.merged) >= 11)
-        result = false;
-    //チェーンマーカーが残っていないときは新規チェーンを形成するタイルは置けない
-    } else if (this.board.checkChain(name) && this.countChain() == 7) {
-      result = false;
-    }
-    this.board.removeTile(name);
-    return result;
-  }
-
   Acquire.prototype.getTile = function() {
     return this.tiles.shift();
   }
 
-  Acquire.prototype.price = function(color) {
-    var size = this.board.getHotelChainSize(color)
-    console.log(size);
-    if (color == "red" || color == "yellow") {
-      if (size == 0) return 0;
-      else if (size == 2) return 200;
-      else if (size == 3) return 300;
-      else if (size == 4) return 400;
-      else if (size == 5) return 500;
-      else if (size <= 10) return 600;
-      else if (size <= 20) return 700;
-      else if (size <= 30) return 800;
-      else if (size <= 40) return 900;
-      else return 1000;
-    } else if (color == "orange" || color == "green" || color == "blue") {
-      if (size == 0) return 0;
-      else if (size == 2) return 300;
-      else if (size == 3) return 400;
-      else if (size == 4) return 500;
-      else if (size == 5) return 600;
-      else if (size <= 10) return 700;
-      else if (size <= 20) return 800;
-      else if (size <= 30) return 900;
-      else if (size <= 40) return 1000;
-      else return 1100;
-    } else if (color == "purple" || color == "cyan") {
-      if (size == 0) return 0;
-      else if (size == 2) return 400;
-      else if (size == 3) return 500;
-      else if (size == 4) return 600;
-      else if (size == 5) return 700;
-      else if (size <= 10) return 800;
-      else if (size <= 20) return 900;
-      else if (size <= 30) return 1000;
-      else if (size <= 40) return 1100;
-      else return 1200;
-    }
-  }
-  
   Acquire.prototype.getShare = function(color) {
     return 10*this.price(color);
   }
@@ -246,7 +192,7 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
   Acquire.prototype.isGameEnd = function() {
     //41を越えるホテルチェーンができていればゲーム終了
-    var self = this;
+/*    var self = this;
     var b = false;
     this.eachChain(function(color){
       if (self.board.getHotelChainSize(color) >= 41)
@@ -258,7 +204,8 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
       if (self.board.getHotelChainSize(colors[p]) < 11)
         return false;
     }
-    return true;
+    return true;*/
+    return false;
   }
 
   function Player(user) {

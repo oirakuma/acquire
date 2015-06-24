@@ -123,6 +123,12 @@ class GamesController < ApplicationController
 private
 
   def render_json(g)
-    render :json => g, :include => :users
+    h = JSON.parse(g.to_json(:include => :users))
+    h["stock_prices"] = Hash.new.tap{|h|
+      Game::COLORS.each{|x|
+        h[x] = g.get_price(x)
+      }
+    }
+    render :json => h
   end
 end

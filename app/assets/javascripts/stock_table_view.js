@@ -10,7 +10,7 @@
   StockTableView.prototype.createStockPrices = function() {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
-      tr.append('<td>$'+this.model.price(colors[p])+'</td>');
+      tr.append('<td>$'+game.stock_prices[colors[p]]+'</td>');
     }
     return tr;
   }
@@ -19,7 +19,13 @@
   StockTableView.prototype.createChainSizes = function() {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
-      tr.append('<td>'+this.model.board.getHotelChainSize(colors[p])+'</td>');
+      var tiles = JSON.parse(game.placed_tiles);
+      var count = 0;
+      for (var q in tiles) {
+        if (tiles[q] == colors[p])
+          count++;
+      }
+      tr.append('<td>'+count+'</td>');
     }
     return tr;
   }
