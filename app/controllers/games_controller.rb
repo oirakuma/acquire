@@ -95,9 +95,6 @@ class GamesController < ApplicationController
     g = Game.find(params[:id])
     chained = g.put_tile(params[:name])
     g.result = chained
-    if !chained
-      g.next_user
-    end
     g.save
     render_json(g)
   end
@@ -105,6 +102,20 @@ class GamesController < ApplicationController
   def build_chain
     g = Game.find(params[:id])
     g.build_chain(params[:name], params[:color])
+    g.save
+    render_json(g)
+  end
+
+  def purchase_stock
+    g = Game.find(params[:id])
+    g.purchase_stock(params[:color])
+    g.save
+    render_json(g)
+  end
+
+  def purchase_done
+    g = Game.find(params[:id])
+    g.next_user
     g.save
     render_json(g)
   end

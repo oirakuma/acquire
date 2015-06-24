@@ -5,6 +5,8 @@ Acquire::Application.routes.draw do
     member do
       post :put_tile
       post :build_chain
+      post :purchase_stock
+      post :purchase_done
     end
   end
 

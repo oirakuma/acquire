@@ -86,6 +86,15 @@ class Game < ActiveRecord::Base
     u.save
   end
 
+  def purchase_stock(color)
+    u = current_user
+    u.stocks[color] += 1
+    u.cash -= get_price(color)
+    u.stocks = u.stocks.to_json
+    u.tiles = u.tiles.to_json
+    u.save
+  end
+
 private
 
   def current_user
@@ -134,5 +143,85 @@ private
     else
       return get_color(name)
     end
+  end
+
+  def get_price(color)
+    size = get_hotel_chain_size(color)
+    if color == "red" || color == "yellow"
+      case size
+      when 0
+        0
+      when 2
+        200
+      when 3
+        300
+      when 4
+        400
+      when 5
+        500
+      when 6..10
+        600
+      when 11..20
+        700
+      when 21..30
+        800
+      when 31..40
+        900
+      else
+        1000
+      end
+    elsif color == "orange" || color == "green" || color == "blue"
+      case size
+      when 0
+        0
+      when 2
+        300
+      when 3
+        400
+      when 4
+        500
+      when 5
+        600
+      when 6..10
+        700
+      when 11..20
+        800
+      when 21..30
+        900
+      when 31..40
+        1000
+      else
+        1100
+      end
+    elsif color == "purple" || color == "cyan"
+      case size
+      when 0
+        0
+      when 2
+        400
+      when 3
+        500
+      when 4
+        600
+      when 5
+        700
+      when 6..10
+        800
+      when 11..20
+        900
+      when 21..30
+        1000
+      when 31..40
+        1100
+      else
+        1200
+      end
+    end
+  end
+
+  def get_hotel_chain_size(color)
+    JSON.parse(self.tiles).select{|k,v|
+      v == color
+    }.size
   end
 end

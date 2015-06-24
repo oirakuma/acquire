@@ -86,9 +86,10 @@
         }, 0);
         return;
       }
-      setTimeout(function(){
-        tilesView.render();
-      }, 0);
+      $.ajax({
+        url: "/games/1/purchase_done",
+        type: "POST"
+      });
 //      setTimeout(function(){
 //        var action = new Action(self.model);
 //        var ai = new ComputerAI(self.model);

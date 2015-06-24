@@ -266,6 +266,7 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
       this[p] = user[p];
     if (this.tiles)
       this.tiles = JSON.parse(this.tiles);
+    this.stocks = JSON.parse(this.stocks);
   }
 })(this.self);
 

@@ -24,8 +24,9 @@
     return tr;
   }
 
-  StockTableView.prototype.render = function() {
+  StockTableView.prototype.render = function(game) {
     var self = this;
+    if (!game) game = window.game;
 
     //筆頭株主と第２株主をマークする
     var majors = {};
@@ -57,19 +58,20 @@
 //    table.append(tr);
 
     //各プレイヤーの株券の枚数
-    for (var i = 0; i < this.model.players.length; i++) {
+//    for (var i = 0; i < this.model.players.length; i++) {
+    game.users.map(function(u){
       tr = $("<tr></tr>");
-      tr.append('<td>'+i+'</td>');
-      tr.append('<td>$'+this.model.players[i].cash+'</td>');
+      tr.append('<td>'+u.user_id+'</td>');
+      tr.append('<td>$'+u.cash+'</td>');
       for (var p in colors) {
-        var x = this.model.players[i].stocks[colors[p]];
+        var x = JSON.parse(u.stocks)[colors[p]];
         var td = $('<td>'+x+'</td>');
         if (x == majors[colors[p]] || x == minors[colors[p]])
           td.css("font-weight", "bold");
         tr.append(td);
       }
       table.append(tr);
-    }
+    });
 
     //株券の残り枚数
 //    tr = $('<tr><td></td><td></td></tr>');
