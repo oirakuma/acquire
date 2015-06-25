@@ -37,9 +37,14 @@
   }
 
   function mergeDone() {
-    $.ajax({
-      url: "/games/1/merge_done.json",
-      type: "POST"
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1/merge_done.json",
+        type: "POST",
+        success: function(game){
+          resolve(game);
+        }
+      });
     });
   }
 
@@ -73,8 +78,9 @@
         clearTimeout(timerId);
         if (game.result == "merged") {
           self.mergedOption().then(function(){
-            mergeDone();
-            self.purchasePhase(game);
+            mergeDone().then(function(game){
+              self.purchasePhase(game);
+            });
           });
         } else if (game.result == "chained") {
           self.selectHotelChainColor(game).then(function(color){
