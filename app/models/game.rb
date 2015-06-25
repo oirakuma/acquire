@@ -102,32 +102,11 @@ class Game < ActiveRecord::Base
   def get_price(color)
     size = get_hotel_chain_size(color)
     if color == "red" || color == "yellow"
-      case size
-      when 0
-        0
-      when 2
-        200
-      when 3
-        300
-      when 4
-        400
-      when 5
-        500
-      when 6..10
-        600
-      when 11..20
-        700
-      when 21..30
-        800
-      when 31..40
-        900
-      else
-        1000
-      end
+      get_price_by_size(size)
     elsif color == "orange" || color == "green" || color == "blue"
-      size == 0 ? 0 : 100+get_price("red")
+      size == 0 ? 0 : 100+get_price_by_size(size)
     elsif color == "purple" || color == "cyan"
-      size == 0 ? 0 : 200+get_price("red")
+      size == 0 ? 0 : 200+get_price_by_size(size)
     end
   end
 
@@ -167,6 +146,31 @@ class Game < ActiveRecord::Base
   end
 
 private
+
+  def get_price_by_size(size)
+    case size
+    when 0
+      0
+    when 2
+      200
+    when 3
+      300
+    when 4
+      400
+    when 5
+      500
+    when 6..10
+      600
+    when 11..20
+      700
+    when 21..30
+      800
+    when 31..40
+      900
+    else
+      1000
+    end
+  end
 
   def current_user
     self.users[self.current_user_id]
