@@ -115,7 +115,12 @@
 //      }, 1000);
     }
 
-    if (self.model.countChain() > 0) {
+    var chained = false;
+    for (var p in game.chain_markers) {
+      if (game.chain_markers[p])
+        chained = true;
+    }
+    if (chained) {
       var view = new PurchaseView({model:self.model, el:"#purchase"});
       view.render(game).then(next);
     } else {
