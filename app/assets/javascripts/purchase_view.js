@@ -19,7 +19,7 @@
     });
   }
 
-  PurchaseView.prototype.render = function() {
+  PurchaseView.prototype.render = function(game) {
     var self = this;
     var count = 0;
 
@@ -39,9 +39,10 @@
     }
 
     $(self.el).append('<h3>Purchase stocks.</h3>');
-    this.model.eachChain(function(color){
-      $(self.el).append(createChainMarker(color));
-    });
+    for (var p in game.chain_markers) {
+      if (game.chain_markers[p])
+        $(self.el).append(createChainMarker(p));
+    }
 
     return new Promise(function(resolve){
       var a = createButton().text("Done");

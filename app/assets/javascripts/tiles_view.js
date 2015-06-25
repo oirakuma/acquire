@@ -74,16 +74,16 @@
           if (game.result == "merged") {
             self.mergedOption().then(function(){
               mergeDone();
-              self.purchasePhase(game.user_id);
+              self.purchasePhase(game);
             });
           } else if (game.result == "chained") {
             self.selectHotelChainColor().then(function(color){
               buildChain(name, color).then(function(game){
-                self.purchasePhase(game.user_id);
+                self.purchasePhase(game);
               });
             });
           } else {
-            self.purchasePhase(game.user_id);
+            self.purchasePhase(game);
           }
         });
       }
@@ -92,7 +92,7 @@
   }
 
   //購入フェーズ
-  TilesView.prototype.purchasePhase = function(id) {
+  TilesView.prototype.purchasePhase = function(game) {
     var self = this;
 
     function next() {
@@ -117,7 +117,7 @@
 
     if (self.model.countChain() > 0) {
       var view = new PurchaseView({model:self.model, el:"#purchase"});
-      view.render().then(next);
+      view.render(game).then(next);
     } else {
       next();
     }
