@@ -30,24 +30,16 @@
     return tr;
   }
 
+  function include(array, x) {
+    for (var p in array)
+      if (array[p] == x)
+        return true;
+    return false;
+  }
+
   StockTableView.prototype.render = function(game) {
     var self = this;
     if (!game) game = window.game;
-
-    //筆頭株主と第２株主をマークする
-    var majors = {};
-    var minors = {};
-    for (var p in colors) {
-      (function(color){
-        var values = game.users.map(function(u){
-          return u.stocks[color];
-        }).sort().reverse();
-        if (values[0] > 0)
-          majors[colors[p]] = values[0];
-        if (values[1] > 0)
-          minors[colors[p]] = values[1];
-      })(colors[p]);
-    }
 
     var table = $('<table></table>').attr("cellspacing",1);
 
@@ -67,7 +59,7 @@
       for (var p in colors) {
         var x = u.stocks[colors[p]];
         var td = $('<td>'+x+'</td>');
-        if (x == majors[colors[p]] || x == minors[colors[p]])
+        if (include(game.majors[colors[p]], u.user_id) || include(game.minors[colors[p]], u.user_id))
           td.css("font-weight", "bold");
         tr.append(td);
       }

@@ -136,9 +136,22 @@ private
     }
 
     h = JSON.parse(g.to_json(:include => :users))
+    # 株価
     h["stock_prices"] = Hash.new.tap{|h|
       Game::COLORS.each{|x|
         h[x] = g.get_price(x)
+      }
+    }
+    # 筆頭株主
+    h["majors"] = Hash.new.tap{|h|
+      Game::COLORS.each{|x|
+        h[x] = g.majors(x)
+      }
+    }
+    # 第２株主
+    h["minors"] = Hash.new.tap{|h|
+      Game::COLORS.each{|x|
+        h[x] = g.minors(x)
       }
     }
     h["user_id"] = @user.user_id

@@ -145,6 +145,35 @@ class Game < ActiveRecord::Base
     u.save
   end
 
+  def majors(color)
+    max_value = self.users.map{|u|
+      u.stocks[color]
+    }.max
+    return [] if max_value == 0
+    self.users.select{|u|
+      u.stocks[color] == max_value
+    }.map{|u|
+      u.user_id
+    }
+  end
+
+  def minors(color)
+    max_value = self.users.map{|u|
+      u.stocks[color]
+    }.max
+    second_value = self.users.map{|u|
+      u.stocks[color]
+    }.reject{|v|
+      v == max_value
+    }.max
+    return [] if second_value == 0
+    self.users.select{|u|
+      u.stocks[color] == second_value
+    }.map{|u|
+      u.user_id
+    }
+  end
+
 private
 
   def get_price_by_size(size)
