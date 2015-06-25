@@ -2,8 +2,8 @@
   global.StockTableView = StockTableView;
 
   function StockTableView(option) {
-    this.model = option.model;
-    this.id = option.id;
+    for (var p in option)
+      this[p] = option[p];
   }
 
   //株券の価格
@@ -39,8 +39,8 @@
     var minors = {};
     for (var p in colors) {
       (function(color){
-        var values = self.model.players.map(function(player){
-          return player.stocks[color];
+        var values = game.users.map(function(u){
+          return u.stocks[color];
         }).sort().reverse();
         if (values[0] > 0)
           majors[colors[p]] = values[0];
@@ -73,13 +73,6 @@
       }
       table.append(tr);
     });
-
-    //株券の残り枚数
-//    tr = $('<tr><td></td><td></td></tr>');
-//    for (var p in colors) {
-//      tr.append('<td>'+this.model.stocks[colors[p]]+'</td>');
-//    }
-//    table.append(tr);
 
     table.append(this.createChainSizes());
     table.append(this.createStockPrices(game));
