@@ -7,7 +7,7 @@
   }
 
   //株券の価格
-  StockTableView.prototype.createStockPrices = function() {
+  StockTableView.prototype.createStockPrices = function(game) {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>$'+game.stock_prices[colors[p]]+'</td>');
@@ -48,25 +48,20 @@
           minors[colors[p]] = values[1];
       })(colors[p]);
     }
-    console.log(majors);
-    console.log(minors);
 
     var table = $('<table></table>').attr("cellspacing",1);
+
+    //各ホテルチェーンの色
     var tr = $("<tr><th></th><th></th></tr>");
     for (var p in colors)
       tr.append('<th>'+colors[p]+'</th>');
     table.append(tr);
 
-    //ホテルチェーンのサイズ
-//    var tr = $("<tr><th></th><th></th></tr>");
-//    for (var p in colors)
-//      tr.append('<td>'+this.model.board.getHotelChainSize(colors[p])+'</td>');
-//    table.append(tr);
-
     //各プレイヤーの株券の枚数
-//    for (var i = 0; i < this.model.players.length; i++) {
     game.users.map(function(u){
       tr = $("<tr></tr>");
+      if (u.user_id == game.current_user_id)
+        tr.css("background-color", "yellow");
       tr.append('<td>'+u.user_id+'</td>');
       tr.append('<td>$'+u.cash+'</td>');
       for (var p in colors) {
@@ -87,7 +82,7 @@
 //    table.append(tr);
 
     table.append(this.createChainSizes());
-    table.append(this.createStockPrices());
+    table.append(this.createStockPrices(game));
 
     $(this.id).html(table);
     return table;

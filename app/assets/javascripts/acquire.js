@@ -211,15 +211,15 @@ function start(game) {
   tilesView.render();
   tilesView.start();
 
-/*  setInterval(function(){
+  setInterval(function(){
     $.ajax({
       url: "/games/1.json",
       success: function(game) {
-        stockTableView.render();
+        stockTableView.render(game);
         tilesView.render(game);
       }
     });
-  }, 2000);*/
+  }, 2000);
 }
 
 var stockTableView = null;
