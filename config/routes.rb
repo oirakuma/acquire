@@ -14,6 +14,10 @@ Acquire::Application.routes.draw do
       post :trade
       post :merge_done
     end
+
+    collection do
+      post :entry_name
+    end
   end
 
   # The priority is based upon order of creation:

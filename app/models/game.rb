@@ -84,7 +84,11 @@ class Game < ActiveRecord::Base
   end
 
   def merge
+    # チェーンマーカーを返す
+    self.chain_markers[self.merged] = false
+    # 置いたタイルの色を変更する。
     self.placed_tiles[self.name] = self.merger
+    # 吸収されるホテルチェーンのタイルの色を変更する。
     self.placed_tiles.select{|k,v|
       v == self.merged
     }.each{|k,v|

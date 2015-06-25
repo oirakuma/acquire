@@ -83,6 +83,10 @@ class GamesController < ApplicationController
     redirect_to games_url
   end
 
+  def entry_name
+    session[:name] = params[:name]
+  end
+
   def users
     @game = Game.find(params[:id])
     render :json => @game.users

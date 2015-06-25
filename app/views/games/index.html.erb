@@ -1,17 +1,41 @@
-<h1>Listing games</h1>
+<style>
+td,th {
+  padding: 5px;
+}
+</style>
+
+<h1>Acquire</h1>
 
 <table>
   <tr>
-    <th>ユーザ数</th>
+    <th>ルームNo.</th>
+    <th>接続ユーザ数</th>
     <th></th>
     <th></th>
   </tr>
 
 <% @games.each do |game| %>
   <tr>
-    <td><%= game.users.size %></td>
+    <td align="right"><%= game.id %></td>
+    <td align="right"><%= game.users.size %></td>
     <td><%= link_to '接続', game %></td>
     <td><%= link_to 'リセット', reset_game_path(game) %>
   </tr>
 <% end %>
 </table>
+
+<div style="margin-top: 50px">
+<%= text_field_tag :name, rand(36**6).to_s(36), :id => 'name' %>
+<%= button_tag '名前登録', :onclick => 'entryName()' %>
+</div>
+
+<%= javascript_include_tag "jquery" %>
+<script>
+function entryName() {
+  $.ajax({
+    url: "/games/entry_name",
+    data: "name="+$("#name").text(),
+    type: "POST"
+  });
+}
+</script>

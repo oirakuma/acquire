@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :authorize, :only => [:put_tile]
 
   def authenticate
-    @user = User.where(:session_id => session[:session_id]).first_or_create
+    @user = User.where(:session_id => session[:session_id]).first_or_create(:name => session[:name])
     puts "----"
     p @user
   end

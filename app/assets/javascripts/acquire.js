@@ -255,7 +255,6 @@ function start(game) {
 }
 
 var timerId = null;
-var purchaseView = null;
 var tilesView = null;
 var logView = new LogView({el:"#log"});
 var userId = null;

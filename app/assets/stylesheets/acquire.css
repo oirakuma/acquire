@@ -26,12 +26,10 @@ table {
   vertical-align: middle;
   empty-cells: show;
 }
-#stocks td {
-  text-align: right;
-}
 #stocks td,th {
   border-right: 1px solid gray;
   border-bottom: 1px solid gray;
+  text-align: right;
 }
 #two td {
   text-align: right;

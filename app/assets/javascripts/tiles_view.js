@@ -7,12 +7,11 @@
   }
 
   TilesView.prototype.start = function() {
-    $("#chain-markers").html("<h3>Your turn.</h3>");
   }
 
-  TilesView.prototype.selectHotelChainColor = function() {
+  TilesView.prototype.selectHotelChainColor = function(game) {
     var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
-    return view.render();
+    return view.render(game);
   }
 
   TilesView.prototype.mergedOption = function() {
@@ -78,7 +77,7 @@
             self.purchasePhase(game);
           });
         } else if (game.result == "chained") {
-          self.selectHotelChainColor().then(function(color){
+          self.selectHotelChainColor(game).then(function(color){
             buildChain(name, color).then(function(game){
               self.purchasePhase(game);
             });
