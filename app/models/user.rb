@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   belongs_to :game
   serialize :stocks
   serialize :tiles
+  default_scope { order('user_id') }
 
   before_create do
     reset

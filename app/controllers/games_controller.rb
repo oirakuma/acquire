@@ -22,13 +22,7 @@ class GamesController < ApplicationController
 
   def connect
     @game = Game.find(params[:id])
-    unless @user.user_id
-      @user.user_id = @game.users.size
-      @user.tiles = @game.tiles.slice!(0,6)
-    end
-    @game.users << @user
-
-    @game.save
+    @game.add_user(@user) if @game.users.size < 3
     render_json(@game)
   end
 
@@ -171,6 +165,7 @@ private
       }
     }
     h["user_id"] = @user.user_id
+    h.delete("tiles")
 
     render :json => h
   end

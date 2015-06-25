@@ -37,6 +37,14 @@ class Game < ActiveRecord::Base
     self.users = []
   end
 
+  def add_user(u)
+    unless u.user_id
+      u.user_id = self.users.size
+      u.tiles = self.tiles.slice!(0,6)
+    end
+    self.users << u
+  end
+
   def put_tile(name)
     self.placed_tiles[name] = "gray"
     if hotel_merged?(name)
