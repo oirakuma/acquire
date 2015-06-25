@@ -8,11 +8,12 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
   function Acquire() {
   }
 
-  Acquire.prototype.ajax = function(name, type) {
+  Acquire.prototype.ajax = function(name, type, data) {
     return new Promise(function(resolve){
       $.ajax({
         url: "1/"+name+".json",
         type: type,
+        data: data,
         success: function(o){
           resolve(o);
         }

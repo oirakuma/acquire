@@ -23,46 +23,12 @@
     return this.name;
   }
 
-  function putTile(name) {
-    return new Promise(function(resolve){
-      $.ajax({
-        url: "/games/1/put_tile.json",
-        type: "POST",
-        data: "name="+name,
-        success: function(game){
-          resolve(game);
-        }
-      });
-    });
-  }
-
-  function mergeDone() {
-    return new Promise(function(resolve){
-      $.ajax({
-        url: "/games/1/merge_done.json",
-        type: "POST",
-        success: function(game){
-          resolve(game);
-        }
-      });
-    });
-  }
-
-  function buildChain(name, color) {
-    return new Promise(function(resolve){
-      var data = [
-        "name="+name,
-        "color="+color
-      ].join("&");
-      $.ajax({
-        url: "/games/1/build_chain.json",
-        type: "POST",
-        data: data,
-        success: function(game){
-          resolve(game);
-        }
-      });
-    });
+  TilesView.prototype.buildChain = function(name, color) {
+    var data = [
+      "name="+name,
+      "color="+color
+    ].join("&");
+    return this.model.ajax("build_chain", "POST", data);
   }
 
   TilesView.prototype.createTile = function(name) {
@@ -71,20 +37,20 @@
     td.click(function(){
       self.name = $(this).text();
       $("#chain-markers").html("");
-      putTile(name).then(function(game){
+      self.model.ajax("put_tile", "POST", "name="+name).then(function(game){
         if (!game) return;
         window.game = game;
         tilesView.render();
         clearTimeout(timerId);
         if (game.result == "merged") {
           self.mergedOption().then(function(){
-            mergeDone().then(function(game){
+            self.model.ajax("merge_done", "POST").then(function(game){
               self.purchasePhase(game);
             });
           });
         } else if (game.result == "chained") {
           self.selectHotelChainColor(game).then(function(color){
-            buildChain(name, color).then(function(game){
+            self.buildChain(name, color).then(function(game){
               self.purchasePhase(game);
             });
           });
@@ -109,10 +75,7 @@
         }, 0);
         return;
       }
-      $.ajax({
-        url: "/games/1/purchase_done",
-        type: "POST"
-      });
+      self.model.ajax("purchase_done", "POST");
       timerId = setInterval(function(){
         self.model.getTiles().then(function(game){
           StockTableView.render(game);
