@@ -50,26 +50,26 @@
     table.append(tr);
 
     //各プレイヤーの株券の枚数
-    game.users.map(function(u){
-      tr = $("<tr></tr>");
-      if (u.user_id == game.current_user_id)
-        tr.css("background-color", "yellow");
-      tr.append('<td>'+u.user_id+'</td>');
-      tr.append('<td>$'+u.cash+'</td>');
-      for (var p in colors) {
-        var x = u.stocks[colors[p]];
-        var td = $('<td>'+x+'</td>');
-        if (include(game.majors[colors[p]], u.user_id) || include(game.minors[colors[p]], u.user_id))
-          td.css("font-weight", "bold");
-        tr.append(td);
-      }
-      table.append(tr);
+    this.model.getUsers().then(function(users){
+      users.map(function(u){
+        var tr = $("<tr></tr>");
+        if (u.user_id == game.current_user_id)
+          tr.css("background-color", "yellow");
+        tr.append('<td>'+u.user_id+'</td>');
+        tr.append('<td>$'+u.cash+'</td>');
+        for (var p in colors) {
+          var x = u.stocks[colors[p]];
+          var td = $('<td>'+x+'</td>');
+          if (include(game.majors[colors[p]], u.user_id) || include(game.minors[colors[p]], u.user_id))
+            td.css("font-weight", "bold");
+          tr.append(td);
+        }
+        table.append(tr);
+      });
+    }).then(function(){
+      table.append(self.createChainSizes());
+      table.append(self.createStockPrices(game));
+      $(self.id).html(table);
     });
-
-    table.append(this.createChainSizes());
-    table.append(this.createStockPrices(game));
-
-    $(this.id).html(table);
-    return table;
   }
 })(this.self);

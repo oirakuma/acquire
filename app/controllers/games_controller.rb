@@ -76,6 +76,11 @@ class GamesController < ApplicationController
     end
   end
 
+  def users
+    @game = Game.find(params[:id])
+    render :json => @game.users
+  end
+
   def put_tile
     g = Game.find(params[:id])
     g.result = g.put_tile(params[:name])

@@ -15,6 +15,30 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
     chainMarkers = game.chain_markers;
   }
 
+  Acquire.prototype.getUsers = function() {
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1/users.json",
+        type: "GET",
+        success: function(users){
+          resolve(users);
+        }
+      });
+    });
+  }
+
+  Acquire.prototype.getTiles = function() {
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1.json",
+        type: "GET",
+        success: function(users){
+          resolve(users);
+        }
+      });
+    });
+  }
+
   Acquire.prototype.pushTile = function(id) {
 //    this.players[id].tiles.push(this.getTile());
   }
@@ -211,17 +235,13 @@ function start(game) {
   tilesView.render();
   tilesView.start();
 
-  setInterval(function(){
-    $.ajax({
-      url: "/games/1.json",
-      success: function(game) {
-        stockTableView.render(game);
-        tilesView.render(game);
-      }
-    });
+  timerId = setInterval(function(){
+    stockTableView.render();
+    tilesView.render();
   }, 2000);
 }
 
+var timerId = null;
 var stockTableView = null;
 var purchaseView = null;
 var tilesView = null;

@@ -66,27 +66,27 @@
     var td = $('<td></td>').addClass(name).text(name);
     td.click(function(){
       self.name = $(this).text();
-      if (true) {
-        $("#chain-markers").html("");
-        putTile(name).then(function(game){
-          window.game = game;
-          tilesView.render(game);
-          if (game.result == "merged") {
-            self.mergedOption().then(function(){
-              mergeDone();
+      $("#chain-markers").html("");
+      putTile(name).then(function(game){
+        if (!game) return;
+        window.game = game;
+        tilesView.render();
+        clearTimeout(timerId);
+        if (game.result == "merged") {
+          self.mergedOption().then(function(){
+            mergeDone();
+            self.purchasePhase(game);
+          });
+        } else if (game.result == "chained") {
+          self.selectHotelChainColor().then(function(color){
+            buildChain(name, color).then(function(game){
               self.purchasePhase(game);
             });
-          } else if (game.result == "chained") {
-            self.selectHotelChainColor().then(function(color){
-              buildChain(name, color).then(function(game){
-                self.purchasePhase(game);
-              });
-            });
-          } else {
-            self.purchasePhase(game);
-          }
-        });
-      }
+          });
+        } else {
+          self.purchasePhase(game);
+        }
+      });
     });
     return td;
   }
@@ -108,11 +108,10 @@
         url: "/games/1/purchase_done",
         type: "POST"
       });
-//      setTimeout(function(){
-//        var action = new Action(self.model);
-//        var ai = new ComputerAI(self.model);
-//        action.start(id+1, ai);
-//      }, 1000);
+      timerId = setInterval(function(){
+        tilesView.render();
+        stockTableView.render();
+      }, 1000);
     }
 
     var chained = false;
@@ -128,30 +127,32 @@
     }
   }
 
-  TilesView.prototype.render = function(game) {
-    if (!game) game = window.game;
-
-    var table = $("<table></table>").attr("cellspacing",1);
-    for (var i = 0; i < 9; i++) {
-      var tr = $("<tr></tr>");
-      for (var j = 0; j < 12; j++)
-        tr.append(this.createTile((j+1)+chars[i]));
-      table.append(tr);
-    }
-
-    //タイルが置かれているエリアの色を変更する
-    var tiles = game.placed_tiles;
-    for (var p in tiles) {
-      var td = table.find("."+p);
-      td.css("background-color", tiles[p]);
-      td.css("border", "1px outset "+tiles[p]);
-      td.text("");
-    }
-
-    //プレイヤーのタイルを強調する
-    game.users[game.user_id].tiles.map(function(name){
-      table.find("."+name).css("color", "orange").css("font-weight", "bold");
+  TilesView.prototype.render = function() {
+    var self = this;
+    this.model.getTiles().then(function(game){
+      window.game = game;
+      var table = $("<table></table>").attr("cellspacing",1);
+      for (var i = 0; i < 9; i++) {
+        var tr = $("<tr></tr>");
+        for (var j = 0; j < 12; j++)
+          tr.append(self.createTile((j+1)+chars[i]));
+        table.append(tr);
+      }
+  
+      //タイルが置かれているエリアの色を変更する
+      var tiles = game.placed_tiles;
+      for (var p in tiles) {
+        var td = table.find("."+p);
+        td.css("background-color", tiles[p]);
+        td.css("border", "1px outset "+tiles[p]);
+        td.text("");
+      }
+  
+      //プレイヤーのタイルを強調する
+      game.users[game.user_id].tiles.map(function(name){
+        table.find("."+name).css("color", "orange").css("font-weight", "bold");
+      });
+      $(self.id).html(table);
     });
-    $(this.id).html(table);
   }
 })(this.self);

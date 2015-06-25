@@ -1,15 +1,40 @@
 function Promise(fn) {
-  var callback = null;
+  var state = 'pending';
+  var value;
+  var deferred = null;
 
-  this.then = function(cb) {
-    callback = cb;
+  function resolve(newValue) {
+    value = newValue;
+    state = 'resolved';
+
+    if (deferred) {
+      handle(deferred);
+    }
   }
 
-  function resolve(value) {
-    setTimeout(function() {
-      callback(value);
-    }, 0);
+  function handle(handler) {
+    if (state === 'pending') {
+      deferred = handler;
+      return;
+    }
+
+    if (!handler.onResolved) {
+      handler.resolve(value);
+      return;
+    }
+
+    var ret = handler.onResolved(value);
+    handler.resolve(ret);
   }
+
+  this.then = function(onResolved) {
+    return new Promise(function(resolve) {
+      handle({
+        onResolved: onResolved,
+        resolve: resolve
+      });
+    });
+  };
 
   fn(resolve);
 }
