@@ -244,6 +244,8 @@ function start(game) {
   tilesView.render();
   tilesView.start();
 
+  $("#user").html("Your user id is "+game.user_id+".");
+
   timerId = setInterval(function(){
     acquire.getTiles().then(function(game){ 
       StockTableView.render(game);
