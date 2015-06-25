@@ -112,7 +112,7 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
     }
 
     setTimeout(function(){
-      stockTableView.render();
+      StockTableView.render();
     }, 0);
   }
 
@@ -178,16 +178,26 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 //  }
 
   Acquire.prototype.sell = function(x) {
-    $.ajax({
-      url: "/games/1/sell.json",
-      type: "POST"
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1/sell.json",
+        type: "POST",
+        success: function(game){
+          resolve(game);
+        }
+      });
     });
   }
 
   Acquire.prototype.trade = function(x) {
-    $.ajax({
-      url: "/games/1/trade.json",
-      type: "POST"
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "/games/1/trade.json",
+        type: "POST",
+        success: function(game){
+          resolve(game);
+        }
+      });
     });
   }
 
@@ -229,20 +239,20 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
 function start(game) {
   var acquire = new Acquire(game);
-  stockTableView = new StockTableView({model:acquire,id:"#stocks"});
-  stockTableView.render();
+  StockTableView.render(game);
   tilesView = new TilesView({model:acquire,id: "#tiles"});
   tilesView.render();
   tilesView.start();
 
   timerId = setInterval(function(){
-    stockTableView.render();
+    acquire.getTiles().then(function(game){ 
+      StockTableView.render(game);
+    });
     tilesView.render();
-  }, 2000);
+  }, 1000);
 }
 
 var timerId = null;
-var stockTableView = null;
 var purchaseView = null;
 var tilesView = null;
 var logView = new LogView({el:"#log"});

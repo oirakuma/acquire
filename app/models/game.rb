@@ -85,10 +85,10 @@ class Game < ActiveRecord::Base
 
   def merge
     self.placed_tiles[self.name] = self.merger
-    tiles.select{|k,v|
+    self.placed_tiles.select{|k,v|
       v == self.merged
     }.each{|k,v|
-      tiles[k] = self.merger
+      self.placed_tiles[k] = self.merger
     }
   end
 

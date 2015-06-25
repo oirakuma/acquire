@@ -1,13 +1,11 @@
 (function(global){
   global.StockTableView = StockTableView;
 
-  function StockTableView(option) {
-    for (var p in option)
-      this[p] = option[p];
+  function StockTableView() {
   }
 
   //株券の価格
-  StockTableView.prototype.createStockPrices = function(game) {
+  function createStockPrices(game) {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>$'+game.stock_prices[colors[p]]+'</td>');
@@ -16,7 +14,7 @@
   }
 
   //ホテルチェーンのサイズ
-  StockTableView.prototype.createChainSizes = function() {
+  function createChainSizes(game) {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       var tiles = game.placed_tiles;
@@ -37,11 +35,9 @@
     return false;
   }
 
-  StockTableView.prototype.render = function(game) {
-    var self = this;
-    if (!game) game = window.game;
-
+  StockTableView.render = function(game) {
     var table = $('<table></table>').attr("cellspacing",1);
+    if (!game) game = window.game;
 
     //各ホテルチェーンの色
     var tr = $("<tr><th></th><th></th></tr>");
@@ -50,26 +46,24 @@
     table.append(tr);
 
     //各プレイヤーの株券の枚数
-    this.model.getUsers().then(function(users){
-      users.map(function(u){
-        var tr = $("<tr></tr>");
-        if (u.user_id == game.current_user_id)
-          tr.css("background-color", "yellow");
-        tr.append('<td>'+u.user_id+'</td>');
-        tr.append('<td>$'+u.cash+'</td>');
-        for (var p in colors) {
-          var x = u.stocks[colors[p]];
-          var td = $('<td>'+x+'</td>');
-          if (include(game.majors[colors[p]], u.user_id) || include(game.minors[colors[p]], u.user_id))
-            td.css("font-weight", "bold");
-          tr.append(td);
-        }
-        table.append(tr);
-      });
-    }).then(function(){
-      table.append(self.createChainSizes());
-      table.append(self.createStockPrices(game));
-      $(self.id).html(table);
+    game.users.map(function(u){
+      var tr = $("<tr></tr>");
+      if (u.user_id == game.current_user_id)
+        tr.css("background-color", "yellow");
+      tr.append('<td>'+u.user_id+'</td>');
+      tr.append('<td>$'+u.cash+'</td>');
+      for (var p in colors) {
+        var x = u.stocks[colors[p]];
+        var td = $('<td>'+x+'</td>');
+        if (include(game.majors[colors[p]], u.user_id) || include(game.minors[colors[p]], u.user_id))
+          td.css("font-weight", "bold");
+        tr.append(td);
+      }
+      table.append(tr);
     });
+
+    table.append(createChainSizes(game));
+    table.append(createStockPrices(game));
+    $("#stocks").html(table);
   }
 })(this.self);

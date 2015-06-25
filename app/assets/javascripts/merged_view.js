@@ -12,15 +12,17 @@
     var a = createButton().text("Sell");
     a.css("background-color", game.merged);
     a.click(function(){
-      self.model.sell(0);
-      stockTableView.render();
+      self.model.sell(0).then(function(game){
+        StockTableView.render(game);
+      });
     });
     $(this.el).append(a);
 
     var a = createButton().text("Trade").css("background-color", game.merged);
     a.click(function(){
-      self.model.trade(0);
-      stockTableView.render();
+      self.model.trade(0).then(function(game){
+        StockTableView.render(game);
+      });
     });
     $(this.el).append(a);
  

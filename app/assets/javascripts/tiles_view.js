@@ -100,7 +100,7 @@
         self.model.sellAll();
         $("#chain-markers").empty();
         setTimeout(function(){
-          stockTableView.render();
+          StockTableView.render(game);
         }, 0);
         return;
       }
@@ -109,8 +109,10 @@
         type: "POST"
       });
       timerId = setInterval(function(){
+        self.model.getTiles().then(function(game){
+          StockTableView.render(game);
+        });
         tilesView.render();
-        stockTableView.render();
       }, 1000);
     }
 

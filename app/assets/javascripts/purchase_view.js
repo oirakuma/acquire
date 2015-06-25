@@ -32,7 +32,7 @@
         }
         count++;
         purchaseStock(color).then(function(game){
-          stockTableView.render(game);
+          StockTableView.render(game);
         });
       });
       return a;
