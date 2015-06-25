@@ -16,5 +16,6 @@ class User < ActiveRecord::Base
         h[x] = 0
       }
     }
+    self.user_id = nil
   end
 end

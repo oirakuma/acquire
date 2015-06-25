@@ -11,7 +11,7 @@
   <tr>
     <td><%= game.users.size %></td>
     <td><%= link_to '接続', game %></td>
-    <td><%= link_to 'リセット', game, method: :delete, data: { confirm: 'Are you sure?' } %>
+    <td><%= link_to 'リセット', reset_game_path(game) %>
   </tr>
 <% end %>
 </table>

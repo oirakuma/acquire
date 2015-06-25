@@ -5,6 +5,7 @@ Acquire::Application.routes.draw do
     member do
       get :connect
       get :users
+      get :reset
       post :put_tile
       post :build_chain
       post :purchase_stock
