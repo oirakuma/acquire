@@ -34,6 +34,7 @@ class Game < ActiveRecord::Base
       u.reset
       u.save
     }
+    self.users = []
   end
 
   def put_tile(name)
