@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20150624045642) do
 
   create_table "games", force: :cascade do |t|
     t.integer  "status"
-    t.integer  "user_id"
     t.integer  "current_user_id"
     t.string   "result"
     t.string   "name"

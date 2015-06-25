@@ -12,7 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.mobile-1.4.5.min
+//* require jquery.mobile-1.4.5.min
 //= require logView
 //= require tiles_view
 //= require stock_table_view

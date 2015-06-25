@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
   serialize :tiles
 
   before_create do
+    reset
+  end
+
+  def reset
     self.cash = 6000
     self.tiles = []
     self.stocks = Hash.new.tap{|h|

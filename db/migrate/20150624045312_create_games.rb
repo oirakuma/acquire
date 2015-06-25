@@ -2,7 +2,6 @@ class CreateGames < ActiveRecord::Migration
   def change
     create_table :games do |t|
       t.integer :status
-      t.integer :user_id
       t.integer :current_user_id
       t.string :result
       t.string :name

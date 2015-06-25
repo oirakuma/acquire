@@ -22,16 +22,11 @@ class GamesController < ApplicationController
 
   def connect
     @game = Game.find(params[:id])
-    @user.user_id = @game.users.size unless @user.user_id
-    @user.tiles = @game.tiles.slice!(0,6)
+    unless @user.user_id
+      @user.user_id = @game.users.size
+      @user.tiles = @game.tiles.slice!(0,6)
+    end
     @game.users << @user
-    @game.user_id = @user.user_id
-
-    @game.users.select{|u|
-      u.session_id != session[:session_id]
-    }.each{|u|
-      u.tiles = nil
-    }
 
     @game.save
     render_json(@game)
@@ -73,7 +68,7 @@ class GamesController < ApplicationController
   # DELETE /games/1.json
   def destroy
     @game = Game.find(params[:id])
-    @game.destroy
+    @game.reset
 
     respond_to do |format|
       format.html { redirect_to games_url }
@@ -133,12 +128,21 @@ class GamesController < ApplicationController
 private
 
   def render_json(g)
+    # 自分以外の手持ちタイル情報を消去
+    g.users.select{|u|
+      u.user_id != @user.user_id
+    }.each{|u|
+      u.tiles = nil
+    }
+
     h = JSON.parse(g.to_json(:include => :users))
     h["stock_prices"] = Hash.new.tap{|h|
       Game::COLORS.each{|x|
         h[x] = g.get_price(x)
       }
     }
+    h["user_id"] = @user.user_id
+
     render :json => h
   end
 end

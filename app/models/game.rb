@@ -10,6 +10,10 @@ class Game < ActiveRecord::Base
   VECTORS=[1, -1, 0,  0].zip([0,  0, 1, -1])
 
   before_create do
+    reset
+  end
+
+  def reset
     self.status = 0
     self.current_user_id = 0
     self.tiles = (1..12).map{|n|
@@ -24,6 +28,11 @@ class Game < ActiveRecord::Base
       COLORS.each{|x|
         h[x] = false
       }
+    }
+
+    self.users.each{|u|
+      u.reset
+      u.save
     }
   end
 

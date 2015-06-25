@@ -4,12 +4,14 @@
   <tr>
     <th>ユーザ数</th>
     <th></th>
+    <th></th>
   </tr>
 
 <% @games.each do |game| %>
   <tr>
     <td><%= game.users.size %></td>
-    <td><%= link_to 'Show', game %></td>
+    <td><%= link_to '接続', game %></td>
+    <td><%= link_to 'リセット', game, method: :delete, data: { confirm: 'Are you sure?' } %>
   </tr>
 <% end %>
 </table>
