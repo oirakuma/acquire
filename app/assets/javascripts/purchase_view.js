@@ -6,19 +6,6 @@
       this[p] = option[p];
   }
 
-  function purchaseStock(color) {
-    return new Promise(function(resolve){
-      $.ajax({
-        url: "/games/1/purchase_stock.json",
-        type: "POST",
-        data: "color="+color,
-        success: function(game){
-          resolve(game);
-        }
-      });
-    });
-  }
-
   PurchaseView.prototype.render = function(game) {
     var self = this;
     var count = 0;
@@ -31,7 +18,7 @@
           return;
         }
         count++;
-        purchaseStock(color).then(function(game){
+        self.model.ajax("purchase_stock", "POST", "color="+color).then(function(game){
           StockTableView.render(game);
         });
       });
