@@ -9,11 +9,11 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150624045642) do
+ActiveRecord::Schema.define(version: 20150624045642) do
 
-  create_table "games", :force => true do |t|
+  create_table "games", force: :cascade do |t|
     t.integer  "status"
     t.integer  "user_id"
     t.integer  "current_user_id"
@@ -24,11 +24,11 @@ ActiveRecord::Schema.define(:version => 20150624045642) do
     t.text     "tiles"
     t.text     "placed_tiles"
     t.text     "chain_markers"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "users", :force => true do |t|
+  create_table "users", force: :cascade do |t|
     t.string   "name"
     t.string   "session_id"
     t.string   "tiles"
@@ -36,8 +36,8 @@ ActiveRecord::Schema.define(:version => 20150624045642) do
     t.text     "stocks"
     t.integer  "game_id"
     t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

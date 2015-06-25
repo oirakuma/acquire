@@ -27,14 +27,6 @@ class Game < ActiveRecord::Base
     }
   end
 
-  def start
-    self.users.each{|u|
-      u.tiles = self.tiles.slice!(0,6)
-      u.save
-    }
-    self.status = 1
-  end
-
   def put_tile(name)
     self.placed_tiles[name] = "gray"
     if hotel_merged?(name)
@@ -147,7 +139,7 @@ class Game < ActiveRecord::Base
       self.merger = a[0][0]
       self.merged = a[1][0]
     end
-    return colors.size >= 2
+    colors.size >= 2
   end
 
   def sell

@@ -2,22 +2,14 @@
 
 <table>
   <tr>
-    <th>Status</th>
-    <th></th>
-    <th></th>
+    <th>ユーザ数</th>
     <th></th>
   </tr>
 
 <% @games.each do |game| %>
   <tr>
-    <td><%= game.status %></td>
+    <td><%= game.users.size %></td>
     <td><%= link_to 'Show', game %></td>
-    <td><%= link_to 'Edit', edit_game_path(game) %></td>
-    <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New Game', new_game_path %>

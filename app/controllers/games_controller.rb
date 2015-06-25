@@ -14,27 +14,27 @@ class GamesController < ApplicationController
   # GET /games/1.json
   def show
     @game = Game.find(params[:id])
-    u = @game.users.where(:session_id => session[:session_id]).first_or_create(:user_id => @game.users.size)
-    @game.user_id = u.user_id
-
-    case @game.status
-    when 0
-      if @game.users.size == 2
-        @game.start
-      end
+    respond_to do |format|
+      format.html # new.html.erb
+      format.json { render_json(@game) }
     end
+  end
 
-    @game.users.reject{|u|
-      u.session_id == session[:session_id]
+  def connect
+    @game = Game.find(params[:id])
+    @user.user_id = @game.users.size unless @user.user_id
+    @user.tiles = @game.tiles.slice!(0,6)
+    @game.users << @user
+    @game.user_id = @user.user_id
+
+    @game.users.select{|u|
+      u.session_id != session[:session_id]
     }.each{|u|
       u.tiles = nil
     }
 
     @game.save
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render_json(@game) }
-    end
+    render_json(@game)
   end
 
   # GET /games/new
@@ -67,16 +67,6 @@ class GamesController < ApplicationController
         format.json { render json: @game.errors, status: :unprocessable_entity }
       end
     end
-  end
-
-  # PUT /games/1
-  # PUT /games/1.json
-  def update
-    @game = Game.find(params[:id])
-    u = @game.users.where(:session_id => session[:session_id]).first
-    @game.placed_tiles = placed_tiles.to_json
-    @game.save
-    render :json => @game
   end
 
   # DELETE /games/1

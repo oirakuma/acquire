@@ -6,7 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-g = Game.create
-#g.users << User.new
-#g.users << User.new
-#g.start
+10.times do
+  Game.create
+end

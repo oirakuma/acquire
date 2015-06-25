@@ -231,7 +231,7 @@ var game = null;
 
 function checkGameUsers() {
   $.ajax({
-    url: "/games/1.json",
+    url: "/games/1/connect.json",
     success: function(game) {
       window.game = game;
       start(game);
