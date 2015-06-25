@@ -38,18 +38,18 @@ class Game < ActiveRecord::Base
   end
 
   def add_user(u)
+    return false if self.users.size >= 3
     unless u.user_id
       u.user_id = self.users.size
       u.tiles = self.tiles.slice!(0,6)
     end
     self.users << u
+    true
   end
 
   def put_tile(name)
     self.placed_tiles[name] = "gray"
-    if hotel_merged?(name)
-      return "merged"
-    end
+    return "merged" if hotel_merged?(name)
 
     color1 = get_color(name)
     color2 = nil
