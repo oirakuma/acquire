@@ -44,7 +44,7 @@ var TilesView = Backbone.View.extend({
     var name = $(e.target).text();
     console.log(name);
     this.model.ajax("put_tile", "POST", "name="+name).then(function(result){
-      if (!result) return;
+      if (!result || result.result == "false") return;
 
       if (self.model.get("result") == "merged") {
         var view = new MergedView({model:self.model});

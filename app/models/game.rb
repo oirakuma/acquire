@@ -49,12 +49,11 @@ class Game < ActiveRecord::Base
   end
 
   def put_tile(name)
+    return "false" unless current_user.tiles.include?(name)
+
     self.placed_tiles[name] = "gray"
     return "merged" if hotel_merged?(name)
 
-    color1 = get_color(name)
-    color2 = nil
-  
     # 4方向にホテルかホテルチェーンがあるかどうか調べる
     # ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
     expanded = false
