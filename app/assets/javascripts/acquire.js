@@ -3,18 +3,17 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
 var Acquire = Backbone.Model.extend({
   initialize: function(){
-    var self = this;
-    this.updateAll().then(function(game){
-      self.status = "OK";
-      self.set(game);
-    });
+    this.updateAll();
   },
   updateAll: function() {
+    var self = this;
     return new Promise(function(resolve){
       $.ajax({
         url: "1.json",
         type: "GET",
         success: function(o){
+          self.status = "OK";
+          self.set(o);
           resolve(o);
         }
       });
@@ -93,10 +92,7 @@ function start() {
 //  $("#user").html("Your user id is "+game.user_id+".");
 
   timerId = setInterval(function(){
-//    acquire.getTiles().then(function(game){ 
-//      stockTableView.render();
-//    });
-    tilesView.render();
+    acquire.updateAll();
   }, 1000);
 }
 
