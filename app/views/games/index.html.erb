@@ -29,7 +29,7 @@ Welcome, <%= @user.name %>
 </table>
 
 <div style="margin-top: 50px">
-<%= text_field_tag :name, rand(36**6).to_s(36), :id => 'name' %>
+<%= text_field_tag :name, nil, :id => 'name' %>
 <%= button_tag '名前登録', :onclick => 'entryName()' %>
 </div>
 
@@ -38,7 +38,7 @@ Welcome, <%= @user.name %>
 function entryName() {
   $.ajax({
     url: "/games/entry_name",
-    data: "name="+$("#name").text(),
+    data: "name="+$("#name").val(),
     type: "POST"
   });
 }

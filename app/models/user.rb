@@ -18,9 +18,6 @@ class User < ActiveRecord::Base
       }
     }
     self.user_id = nil
-  end
-
-  def name
-    self.session_id[12,4]
+    self.name = "user-#{self.session_id[10,4]}"
   end
 end

@@ -21,7 +21,9 @@ class GamesController < ApplicationController
   end
 
   def entry_name
-    session[:name] = params[:name]
+    @user.name = params[:name]
+    @user.save
+    render :json => @user
   end
 
   def users
