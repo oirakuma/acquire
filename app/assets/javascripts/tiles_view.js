@@ -99,7 +99,7 @@ var TilesView = Backbone.View.extend({
 
     //プレイヤーのタイルを強調する
     self.model.get("users")[self.model.get("user_id")].tiles.map(function(name){
-      table.find("."+name).css("color", "orange").css("font-weight", "bold");
+      table.find("."+name).css("color", "#FF7400").css("font-weight", "bold");
     });
     this.$el.html(table);
   }
