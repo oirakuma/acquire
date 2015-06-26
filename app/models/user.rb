@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 
   before_create do
     reset
+    self.name = "user-#{self.session_id[10,4]}"
   end
 
   def reset
@@ -18,6 +19,5 @@ class User < ActiveRecord::Base
       }
     }
     self.user_id = nil
-    self.name = "user-#{self.session_id[10,4]}"
   end
 end
