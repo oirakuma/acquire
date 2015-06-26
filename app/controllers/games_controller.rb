@@ -115,7 +115,7 @@ private
     h["user_id"] = @user.user_id
     h.delete("tiles")
 
-    h["end"] = @game.end?
+    h["end"] = g.end?
 
     render :json => h
   end
