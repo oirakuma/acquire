@@ -13,6 +13,11 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 2, @game.users.size
   end
 
+  def test_reset
+    @game.reset
+    assert_equal 0, @game.users.size
+  end
+
   def test_put_tile
     t = @user.tiles.first
     assert_nil @game.put_tile(t)

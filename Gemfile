@@ -8,6 +8,9 @@ gem 'protected_attributes'
 
 gem 'sqlite3'
 
+group :test do
+  gem 'simplecov'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
