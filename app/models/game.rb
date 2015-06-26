@@ -95,7 +95,8 @@ class Game < ActiveRecord::Base
     # チェーンマーカーを返す
     self.chain_markers[self.merged] = false
     # 置いたタイルの色を変更する。
-    self.placed_tiles[self.name] = self.merger
+    self.placed_tiles[self.name] = "gray"
+    set_color(self.name, self.merger)
     # 吸収されるホテルチェーンのタイルの色を変更する。
     self.placed_tiles.select{|k,v|
       v == self.merged
