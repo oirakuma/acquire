@@ -31,6 +31,7 @@ Welcome, <%= @user.name %>
 <div style="margin-top: 50px">
 <%= text_field_tag :name, nil, :id => 'name' %>
 <%= button_tag '名前登録', :onclick => 'entryName()' %>
+<p>登録した名前はブラウザを終了するとリセットされます。</p>
 </div>
 
 <%= javascript_include_tag "jquery" %>
