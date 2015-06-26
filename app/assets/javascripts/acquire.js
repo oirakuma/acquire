@@ -35,30 +35,6 @@ var Acquire = Backbone.Model.extend({
   }
 });
 
-  /*Acquire.prototype.getUsers = function() {
-    return this.ajax("users", "GET");
-  }
-
-  Acquire.prototype.getTiles = function() {
-    return new Promise(function(resolve){
-      $.ajax({
-        url: "1.json",
-        type: "GET",
-        success: function(users){
-          resolve(users);
-        }
-      });
-    });
-  }
-
-  Acquire.prototype.sell = function(x) {
-    return this.ajax("sell", "POST");
-  }
-
-  Acquire.prototype.trade = function(x) {
-    return this.ajax("trade", "POST");
-  }*/
-
 function Player(user) {
   for (var p in user)
     this[p] = user[p];

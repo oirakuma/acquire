@@ -116,6 +116,9 @@ private
     h.delete("tiles")
 
     h["end"] = g.end?
+    if h["end"]
+      g.sell_all
+    end
 
     render :json => h
   end

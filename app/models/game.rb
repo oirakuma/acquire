@@ -198,6 +198,16 @@ class Game < ActiveRecord::Base
     return false
   end
 
+  def sell_all
+    self.users.each{|u|
+      u.stocks.each{|k,v|
+        u.cash += get_price(k)*v
+        u.stocks[k] = 0
+      }
+      u.save
+    }
+  end
+
 private
 
   def get_price_by_size(size)

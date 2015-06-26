@@ -21,14 +21,8 @@ var TilesView = Backbone.View.extend({
     var self = this;
 
     function next() {
-//      if (self.model.isGameEnd()) {
-//        self.model.sellAll();
-//        $("#chain-markers").empty();
-//        setTimeout(function(){
-//          StockTableView.render(game);
-//        }, 0);
-//        return;
-//      }
+      if (self.model.get("end"))
+        return;
       self.model.ajax("purchase_done", "POST");
     }
 
@@ -52,7 +46,6 @@ var TilesView = Backbone.View.extend({
     this.model.ajax("put_tile", "POST", "name="+name).then(function(result){
       if (!result) return;
 
-      clearTimeout(timerId);
       if (self.model.get("result") == "merged") {
         var view = new MergedView({model:self.model});
         view.render().then(function(){
