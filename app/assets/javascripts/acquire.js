@@ -1,27 +1,42 @@
 var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
-//model
-(function(global){
-  global.Acquire = Acquire;
-
-  function Acquire() {
-  }
-
-  Acquire.prototype.ajax = function(name, type, data) {
+var Acquire = Backbone.Model.extend({
+  initialize: function(){
+    var self = this;
+    this.updateAll().then(function(game){
+      self.status = "OK";
+      self.set(game);
+    });
+  },
+  updateAll: function() {
+    return new Promise(function(resolve){
+      $.ajax({
+        url: "1.json",
+        type: "GET",
+        success: function(o){
+          resolve(o);
+        }
+      });
+    });
+  },
+  ajax: function(name, type, data) {
+    var self = this;
     return new Promise(function(resolve){
       $.ajax({
         url: "1/"+name+".json",
         type: type,
         data: data,
         success: function(o){
+          self.set(o);
           resolve(o);
         }
       });
     });
   }
+});
 
-  Acquire.prototype.getUsers = function() {
+  /*Acquire.prototype.getUsers = function() {
     return this.ajax("users", "GET");
   }
 
@@ -43,9 +58,8 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
 
   Acquire.prototype.trade = function(x) {
     return this.ajax("trade", "POST");
-  }
+  }*/
 
-  Acquire.prototype.isGameEnd = function() {
     //41を越えるホテルチェーンができていればゲーム終了
 /*    var self = this;
     var b = false;
@@ -60,30 +74,28 @@ var chars = ["A","B","C","D","E","F","G","H","I","J","K","L"];
         return false;
     }
     return true;*/
-    return false;
-  }
 
-  function Player(user) {
-    for (var p in user)
-      this[p] = user[p];
-    if (this.tiles)
-      this.tiles = this.tiles;
-    this.stocks = this.stocks;
-  }
-})(this.self);
+function Player(user) {
+  for (var p in user)
+    this[p] = user[p];
+  if (this.tiles)
+    this.tiles = this.tiles;
+  this.stocks = this.stocks;
+}
 
-function start(game) {
-  StockTableView.render(game);
-  tilesView = new TilesView({model:acquire,id: "#tiles"});
+function start() {
+  var acquire = new Acquire();
+  stockTableView = new StockTableView({model:acquire});
+  stockTableView.render();
+  tilesView = new TilesView({model:acquire});
   tilesView.render();
-  tilesView.start();
 
-  $("#user").html("Your user id is "+game.user_id+".");
+//  $("#user").html("Your user id is "+game.user_id+".");
 
   timerId = setInterval(function(){
-    acquire.getTiles().then(function(game){ 
-      StockTableView.render(game);
-    });
+//    acquire.getTiles().then(function(game){ 
+//      stockTableView.render();
+//    });
     tilesView.render();
   }, 1000);
 }
@@ -93,5 +105,7 @@ var tilesView = null;
 var logView = new LogView({el:"#log"});
 var userId = null;
 var game = null;
-var acquire = new Acquire();
-acquire.ajax("connect").then(start, "GET");
+var stockTableView = null;
+$(document).ready(function(){
+  start();
+});

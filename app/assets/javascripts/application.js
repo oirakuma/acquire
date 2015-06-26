@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require underscore-min
+//= require backbone-min
 //* require jquery.mobile-1.4.5.min
 //= require logView
 //= require tiles_view

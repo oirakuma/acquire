@@ -6,6 +6,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @game.add_user(@user) if @game.users.size < 3
     respond_to do |format|
       format.html # new.html.erb
       format.json { render_json(@game) }
@@ -14,7 +15,6 @@ class GamesController < ApplicationController
 
   def connect
     @game = Game.find(params[:id])
-    @game.add_user(@user) if @game.users.size < 3
     render_json(@game)
   end
 

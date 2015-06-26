@@ -6,7 +6,7 @@
       this[p] = option[p];
   }
 
-  PurchaseView.prototype.render = function(game) {
+  PurchaseView.prototype.render = function() {
     var self = this;
     var count = 0;
 
@@ -18,17 +18,15 @@
           return;
         }
         count++;
-        self.model.ajax("purchase_stock", "POST", "color="+color).then(function(game){
-          StockTableView.render(game);
-        });
+        self.model.ajax("purchase_stock", "POST", "color="+color);
       });
       return a;
     }
 
     $(self.el).append('<h3>Purchase stocks.</h3>');
-    for (var p in game.chain_markers) {
-      if (game.chain_markers[p])
-        $(self.el).append(createChainMarker(p));
+    for (var p in this.model.get("chain_markers")) {
+      if (this.model.get("chain_markers")[p])
+        $(this.el).append(createChainMarker(p));
     }
 
     return new Promise(function(resolve){
