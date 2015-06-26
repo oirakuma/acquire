@@ -59,21 +59,6 @@ var Acquire = Backbone.Model.extend({
     return this.ajax("trade", "POST");
   }*/
 
-    //41を越えるホテルチェーンができていればゲーム終了
-/*    var self = this;
-    var b = false;
-    this.eachChain(function(color){
-      if (self.board.getHotelChainSize(color) >= 41)
-        b = true;
-    });
-    if (b) return true;
-    //すべてのホテルチェーンが11以上ならゲーム終了
-    for (var p in colors) {
-      if (self.board.getHotelChainSize(colors[p]) < 11)
-        return false;
-    }
-    return true;*/
-
 function Player(user) {
   for (var p in user)
     this[p] = user[p];

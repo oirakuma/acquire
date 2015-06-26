@@ -186,6 +186,18 @@ class Game < ActiveRecord::Base
     }
   end
 
+  def end?
+    # 41を越えるホテルチェーンができていたらゲーム終了
+    return true if self.chain_markers.select{|k,v|v}.any?{|k,v|
+      get_hotel_chain_size(k) >= 41
+    }
+    # すべてのホテルチェーンが11以上ならゲーム終了
+    return true if self.chain_markers.all?{|k,v|
+      get_hotel_chain_size(k) >= 11
+    }
+    return false
+  end
+
 private
 
   def get_price_by_size(size)
