@@ -7,9 +7,9 @@ class CreateGames < ActiveRecord::Migration
       t.string :name
       t.string :merger
       t.string :merged
+      t.string :chain_markers
       t.text :tiles
       t.text :placed_tiles
-      t.text :chain_markers
 
       t.timestamps
     end

@@ -78,6 +78,7 @@ var TilesView = Backbone.View.extend({
   render: function() {
     var self = this;
     if (self.model.status != "OK") return;
+    $("#turn").html("It's "+self.model.get("current_user_name")+"'s turn.")
 
     var table = $("<table></table>").attr("cellspacing",1);
     for (var i = 0; i < 9; i++) {

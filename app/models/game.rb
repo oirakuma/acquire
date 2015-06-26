@@ -208,6 +208,10 @@ class Game < ActiveRecord::Base
     }
   end
 
+  def current_user
+    self.users[self.current_user_id]
+  end
+
 private
 
   def get_price_by_size(size)
@@ -233,10 +237,6 @@ private
     else
       1000
     end
-  end
-
-  def current_user
-    self.users[self.current_user_id]
   end
 
   def set_color(name, color)

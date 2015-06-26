@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessible :name, :session_id, :user_id, :tiles, :stocks, :cash
+  attr_accessible :session_id, :user_id, :tiles, :stocks, :cash
   belongs_to :game
   serialize :stocks
   serialize :tiles
@@ -18,5 +18,9 @@ class User < ActiveRecord::Base
       }
     }
     self.user_id = nil
+  end
+
+  def name
+    self.session_id[12,4]
   end
 end

@@ -4,8 +4,8 @@ class CreateUsers < ActiveRecord::Migration
       t.string :name
       t.string :session_id
       t.string :tiles
+      t.string :stocks
       t.integer :cash
-      t.text :stocks
       t.integer :game_id, :default => nil
       t.integer :user_id, :default => nil
 

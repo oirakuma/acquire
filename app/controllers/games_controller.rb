@@ -13,11 +13,6 @@ class GamesController < ApplicationController
     end
   end
 
-  def connect
-    @game = Game.find(params[:id])
-    render_json(@game)
-  end
-
   def reset
     @game = Game.find(params[:id])
     @game.reset
@@ -119,6 +114,8 @@ private
     if h["end"]
       g.sell_all
     end
+
+    h["current_user_name"] = g.current_user.name
 
     render :json => h
   end

@@ -17,7 +17,7 @@ var StockTableView = Backbone.View.extend({
 
     var tr = $("<tr><td><td></td></td></tr>");
     this.model.get("users").map(function(u){
-      var td = $('<td>'+u.user_id+'</td>');
+      var td = $('<th>'+u.name+'</th>');
       if (u.user_id == self.model.current_user_id)
         td.css("background-color", "yellow");
       tr.append(td);
