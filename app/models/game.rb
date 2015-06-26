@@ -44,6 +44,7 @@ class Game < ActiveRecord::Base
       u.tiles = self.tiles.slice!(0,6)
     end
     self.users << u
+    self.save
     true
   end
 
