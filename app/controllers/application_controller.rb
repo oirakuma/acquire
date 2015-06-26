@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :authorize, :only => [:put_tile]
 
   def authenticate
+    session[:init] = true
     @user = User.where(:session_id => session[:session_id]).first_or_create
   end
 
