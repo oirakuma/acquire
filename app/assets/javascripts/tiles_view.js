@@ -7,16 +7,7 @@ var TilesView = Backbone.View.extend({
     var view = new ChainMarkersView({model:this.model});
     return view.render();
   },
-//
-//  TilesView.prototype.mergedOption = function() {
-//    var view = new MergedView({model:this.model,el:"#merged"});
-//    return view.render();
-//  }
-//
-//  TilesView.prototype.getMove = function(id) {
-//    return this.name;
-//  }
-//
+
   buildChain: function(name, color) {
     var data = [
       "name="+name,
@@ -63,9 +54,10 @@ var TilesView = Backbone.View.extend({
 
       clearTimeout(timerId);
       if (self.model.get("result") == "merged") {
-        self.mergedOption().then(function(){
-          self.model.ajax("merge_done", "POST").then(function(game){
-            self.purchasePhase(game);
+        var view = new MergedView({model:self.model});
+        view.render().then(function(){
+          self.model.ajax("merge_done", "POST").then(function(){
+            self.purchasePhase();
           });
         });
       } else if (self.model.get("result") == "chained") {

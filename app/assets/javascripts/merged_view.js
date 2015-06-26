@@ -1,28 +1,18 @@
-(function(global){
-  global.MergedView = MergedView;
-
-  function MergedView(option) {
-    for (var p in option)
-      this[p] = option[p];
-  }
-
-  MergedView.prototype.render = function() {
+var MergedView = Backbone.View.extend({
+  el: "#merged",
+  render: function() {
     var self = this;
-    
+ 
     var a = createButton().text("Sell");
-    a.css("background-color", game.merged);
+    a.css("background-color", this.model.get("merged"));
     a.click(function(){
-      self.model.sell(0).then(function(game){
-        StockTableView.render(game);
-      });
+      self.model.ajax("sell", "POST");
     });
     $(this.el).append(a);
 
-    var a = createButton().text("Trade").css("background-color", game.merged);
+    var a = createButton().text("Trade").css("background-color", this.model.get("merged"));
     a.click(function(){
-      self.model.trade(0).then(function(game){
-        StockTableView.render(game);
-      });
+      self.model.ajax("trade", "POST");
     });
     $(this.el).append(a);
  
@@ -35,4 +25,4 @@
       });
     });
   }
-})(this.self);
+});
