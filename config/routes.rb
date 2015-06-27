@@ -4,6 +4,7 @@ Acquire::Application.routes.draw do
   resources :games do
     member do
       get :reset
+      get :disconnect
       post :put_tile
       post :build_chain
       post :purchase_stock

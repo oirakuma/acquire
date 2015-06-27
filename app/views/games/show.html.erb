@@ -1,5 +1,17 @@
+<style>
+#close {
+  right: 8px;
+  top: 8px;
+  position: absolute;
+}
+</style>
+
 Welcome, <%= @user.name %>.
 <span id="turn"></span>
+
+<div id="close">
+<%= link_to "切断", disconnect_game_url(@game) %>
+</div>
 
 <div>
     <div id="user"></div>

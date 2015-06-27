@@ -28,6 +28,12 @@ class GamesController < ApplicationController
     render :json => @user
   end
 
+  def disconnect
+    @game = Game.find(params[:id])
+    @game.users.delete(@user)
+    redirect_to games_url
+  end
+
   def put_tile
     g = Game.find(params[:id])
     service = MergeService.new(g)
