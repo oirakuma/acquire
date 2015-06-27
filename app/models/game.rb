@@ -28,6 +28,7 @@ class Game < ActiveRecord::Base
       u.save
     }
     self.users = []
+    self.merged = nil
   end
 
   def add_user(u)
