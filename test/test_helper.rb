@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
     @game = Game.new
     @game.save
 
-    @user = User.create
+    @user = User.create(:session_id => "test")
     @game.add_user @user
     @game.add_user User.create
     @game.save
