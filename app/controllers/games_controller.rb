@@ -92,35 +92,7 @@ class GamesController < ApplicationController
 private
 
   def render_json(g, virtual_tile = nil, shares = nil)
-    # 自分以外の手持ちタイル情報を消去
-    g.users.select{|u|
-      u.user_id != @user.user_id
-    }.each{|u|
-      u.tiles = nil
-    }
-
-    h = JSON.parse(g.to_json(:include => :users))
-    # 株価
-    h["stock_prices"] = Hash.new.tap{|h|
-      Game::COLORS.each{|x|
-        h[x] = g.get_price(x)
-      }
-    }
-
-    h["user_id"] = @user.user_id
-    h["user"] = @user
-    h.delete("tiles")
-
-    h["virtual_tile"] = virtual_tile
-    h["shares"] = shares
-
-    h["end"] = g.end?
-    if h["end"]
-      g.sell_all
-    end
-
-    h["current_user_name"] = g.current_user.name
-
-    render :json => h
+    service = JsonBuilder.new(g, @user, virtual_tile, shares)
+    render :json => service.execute
   end
 end
