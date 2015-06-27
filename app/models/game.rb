@@ -44,8 +44,14 @@ class Game < ActiveRecord::Base
     u = current_user
     u.tiles << self.tiles.shift
     u.save
+    self.users.each{|u|
+      u.merged = false
+      u.save
+    }
     self.current_user_id += 1
     self.current_user_id = self.current_user_id % self.users.size
+    self.merger = nil
+    self.merged = nil
   end
 
   def build_chain(name, color)

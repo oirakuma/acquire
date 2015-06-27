@@ -53,7 +53,16 @@ function start() {
 //  $("#user").html("Your user id is "+game.user_id+".");
 
   timerId = setInterval(function(){
-    acquire.updateAll();
+    acquire.updateAll().then(function(){
+      if (acquire.get("merged")) {
+        if (acquire.get("current_user_id") == acquire.get("user").user_id) return;
+        if (acquire.get("user").merged) return;
+        var view = new MergedView({model:acquire});
+        view.render().then(function(){
+          acquire.ajax("merge_done", "POST");
+        });
+      }
+    });
   }, 1000);
 }
 

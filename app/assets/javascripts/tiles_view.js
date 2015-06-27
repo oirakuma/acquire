@@ -58,14 +58,7 @@ var TilesView = Backbone.View.extend({
     console.log(name);
     this.model.ajax("put_tile", "POST", "name="+name).then(function(result){
       if (!result || result.result == "false") return;
-
       if (self.model.get("result") == "merged") {
-        var virtual_tile = self.model.get("virtual_tile");
-        $("#purchase").append("<div>仮想ユーザのタイル: "+virtual_tile+"</div>");
-        var shares = self.model.get("shares");
-        for (var p in shares)
-          $("#purchase").append("<div>"+p+":"+shares[p]+"</div>");
-
         self.mergedOption();
       } else if (self.model.get("result") == "chained") {
         self.selectHotelChainColor().then(function(color){

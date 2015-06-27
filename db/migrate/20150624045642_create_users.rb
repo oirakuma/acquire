@@ -8,6 +8,7 @@ class CreateUsers < ActiveRecord::Migration
       t.integer :cash
       t.integer :game_id, :default => nil
       t.integer :user_id, :default => nil
+      t.boolean :merged
 
       t.timestamps
     end

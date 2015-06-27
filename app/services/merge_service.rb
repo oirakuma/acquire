@@ -55,7 +55,15 @@ class MergeService
     }.each{|k,v|
       @game.placed_tiles[k] = @game.merger
     }
-    hotel_merged?(@game.name)
+    if hotel_merged?(@game.name)
+      @game.users.each{|u|
+        u.merged = false
+        u.save
+      }
+      return true
+    else
+      return false
+    end
   end
 
 private

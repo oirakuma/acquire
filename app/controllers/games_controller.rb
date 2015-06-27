@@ -79,9 +79,13 @@ class GamesController < ApplicationController
 
   def merge_done
     g = Game.find(params[:id])
-    service = MergeService.new(g)
-    g.result = service.merge
-    g.save
+    @user.merged = true
+    @user.save
+    if g.users.all?{|u|u.merged}
+      service = MergeService.new(g)
+      g.result = service.merge
+      g.save
+    end
     render_json(g)
   end
 
@@ -104,6 +108,7 @@ private
     }
 
     h["user_id"] = @user.user_id
+    h["user"] = @user
     h.delete("tiles")
 
     h["virtual_tile"] = virtual_tile

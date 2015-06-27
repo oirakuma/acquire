@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20150624045642) do
     t.integer  "cash"
     t.integer  "game_id"
     t.integer  "user_id"
+    t.boolean  "merged"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
