@@ -3,7 +3,6 @@ Acquire::Application.routes.draw do
 
   resources :games do
     member do
-      get :users
       get :reset
       post :put_tile
       post :build_chain

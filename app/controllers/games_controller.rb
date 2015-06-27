@@ -29,11 +29,6 @@ class GamesController < ApplicationController
     render :json => @user
   end
 
-  def users
-    @game = Game.find(params[:id])
-    render :json => @game.users
-  end
-
   def put_tile
     g = Game.find(params[:id])
     service = MergeService.new(g)
