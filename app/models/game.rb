@@ -42,15 +42,19 @@ class Game < ActiveRecord::Base
   end
 
   def put_tile(name)
-#    return "false" unless current_user.tiles.include?(name)
+    return "false" unless current_user.tiles.include?(name)
 
     self.placed_tiles[name] = "gray"
 
     if hotel_merged?(name)
       h = get_majors(self.merged)
       price = get_price(self.merged)
-      @shares = share_to_stockholders(h["majors"], price*15, price*10, {})
-      @shares = share_to_stockholders(h["minors"], price*5, price*5, @shares)
+      if h["majors"]
+        @shares = share_to_stockholders(h["majors"], price*15, price*10, {})
+      end
+      if h["minors"]
+        @shares = share_to_stockholders(h["minors"], price*5, price*5, @shares)
+      end
       return "merged"
     end
 
@@ -168,19 +172,17 @@ class Game < ActiveRecord::Base
       values << @virtual_tile.to_i
     end
     max_value = values.max
-    return [] if max_value == 0
 
     Hash.new.tap{|h|
       h["majors"] = self.users.select{|u|
         u.stocks[color] == max_value
-      }
+      } if max_value > 0
 
       values.delete(max_value)
       second_value = values.max
-      return [] if second_value == 0
       h["minors"] = self.users.select{|u|
         u.stocks[color] == second_value
-      }
+      } if second_value > 0
     }
   end
 
