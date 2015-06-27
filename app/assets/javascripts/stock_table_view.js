@@ -38,8 +38,8 @@ var StockTableView = Backbone.View.extend({
       //各プレイヤーの株券の枚数
       this.model.get("users").map(function(u){
         var td = $('<td>'+u.stocks[colors[p]]+'</td>');
-        if (include(self.model.get("majors")[colors[p]], u.user_id) || include(self.model.get("minors")[colors[p]], u.user_id))
-          td.css("font-weight", "bold");
+//        if (include(self.model.get("majors")[colors[p]], u.user_id) || include(self.model.get("minors")[colors[p]], u.user_id))
+//          td.css("font-weight", "bold");
         tr.append(td);
       });
       table.append(tr);

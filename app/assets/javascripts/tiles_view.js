@@ -39,6 +39,19 @@ var TilesView = Backbone.View.extend({
     }
   },
 
+  mergedOption: function() {
+    var self = this;
+    var view = new MergedView({model:self.model});
+    view.render().then(function(){
+      self.model.ajax("merge_done", "POST").then(function(){
+        if (self.model.get("result") == "t")
+          self.mergedOption();
+        else
+          self.purchasePhase();
+      });
+    });
+  },
+
   putTile: function(e, ui) {
     var self = this;
     var name = $(e.target).text();
@@ -47,12 +60,13 @@ var TilesView = Backbone.View.extend({
       if (!result || result.result == "false") return;
 
       if (self.model.get("result") == "merged") {
-        var view = new MergedView({model:self.model});
-        view.render().then(function(){
-          self.model.ajax("merge_done", "POST").then(function(){
-            self.purchasePhase();
-          });
-        });
+        var virtual_tile = self.model.get("virtual_tile");
+        $("#purchase").append("<div>仮想ユーザのタイル: "+virtual_tile+"</div>");
+        var shares = self.model.get("shares");
+        for (var p in shares)
+          $("#purchase").append("<div>"+p+":"+shares[p]+"</div>");
+
+        self.mergedOption();
       } else if (self.model.get("result") == "chained") {
         self.selectHotelChainColor().then(function(color){
           self.buildChain(name, color).then(function(){

@@ -1,5 +1,6 @@
 class Game < ActiveRecord::Base
   attr_accessible :status
+  attr_reader :virtual_tile, :shares
   has_many :users
   serialize :placed_tiles
   serialize :chain_markers
@@ -21,15 +22,8 @@ class Game < ActiveRecord::Base
         "#{n}#{c}"
       }
     }.flatten.sort_by{rand}
-
     self.placed_tiles = {}
-
-    self.chain_markers = Hash.new.tap{|h|
-      COLORS.each{|x|
-        h[x] = false
-      }
-    }
-
+    self.chain_markers = Hash[COLORS.map{|x|[x,false]}]
     self.users.each{|u|
       u.reset
       u.save
@@ -44,15 +38,21 @@ class Game < ActiveRecord::Base
       u.tiles = self.tiles.slice!(0,6)
     end
     self.users << u
-    self.save
     true
   end
 
   def put_tile(name)
-    return "false" unless current_user.tiles.include?(name)
+#    return "false" unless current_user.tiles.include?(name)
 
     self.placed_tiles[name] = "gray"
-    return "merged" if hotel_merged?(name)
+
+    if hotel_merged?(name)
+      h = get_majors(self.merged)
+      price = get_price(self.merged)
+      @shares = share_to_stockholders(h["majors"], price*15, price*10, {})
+      @shares = share_to_stockholders(h["minors"], price*5, price*5, @shares)
+      return "merged"
+    end
 
     # 4方向にホテルかホテルチェーンがあるかどうか調べる
     # ホテルチェーンがあった場合は吸収される（合併でないことは保証されている）
@@ -103,6 +103,7 @@ class Game < ActiveRecord::Base
     }.each{|k,v|
       self.placed_tiles[k] = self.merger
     }
+    hotel_merged?(self.name)
   end
 
   def purchase_stock(color)
@@ -158,32 +159,28 @@ class Game < ActiveRecord::Base
     u.save
   end
 
-  def majors(color)
-    max_value = self.users.map{|u|
+  def get_majors(color)
+    values = self.users.map{|u|
       u.stocks[color]
-    }.max
-    return [] if max_value == 0
-    self.users.select{|u|
-      u.stocks[color] == max_value
-    }.map{|u|
-      u.user_id
     }
-  end
+    if self.users.size == 2
+      @virtual_tile = self.tiles[rand(self.tiles.size)]
+      values << @virtual_tile.to_i
+    end
+    max_value = values.max
+    return [] if max_value == 0
 
-  def minors(color)
-    max_value = self.users.map{|u|
-      u.stocks[color]
-    }.max
-    second_value = self.users.map{|u|
-      u.stocks[color]
-    }.reject{|v|
-      v == max_value
-    }.max
-    return [] if second_value == 0
-    self.users.select{|u|
-      u.stocks[color] == second_value
-    }.map{|u|
-      u.user_id
+    Hash.new.tap{|h|
+      h["majors"] = self.users.select{|u|
+        u.stocks[color] == max_value
+      }
+
+      values.delete(max_value)
+      second_value = values.max
+      return [] if second_value == 0
+      h["minors"] = self.users.select{|u|
+        u.stocks[color] == second_value
+      }
     }
   end
 
@@ -214,6 +211,24 @@ class Game < ActiveRecord::Base
   end
 
 private
+
+  def share_to_stockholders(users, amount1, amount2, h)
+    if users.size == 0
+      nil
+    elsif users.size >= 2
+      users.each{|u|
+        h[u.name] = amount1/users.size
+        u.cash += amount1/users.size
+        u.save
+      }
+    else
+      u = users.first
+      h[u.name] = amount2
+      u.cash += amount2
+      u.save
+    end
+    h
+  end
 
   def get_price_by_size(size)
     case size

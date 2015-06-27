@@ -10,7 +10,8 @@ var MergedView = Backbone.View.extend({
     });
     $(this.el).append(a);
 
-    var a = createButton().text("Trade").css("background-color", this.model.get("merged"));
+    var a = createButton().text("Trade");
+    a.css("background-color", this.model.get("merged"));
     a.click(function(){
       self.model.ajax("trade", "POST");
     });

@@ -6,7 +6,10 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @game.add_user(@user) if @game.users.size < 3
+    if @game.users.size < 3
+      @game.add_user(@user)
+      @game.save
+    end
     respond_to do |format|
       format.html # new.html.erb
       format.json { render_json(@game) }
@@ -75,7 +78,7 @@ class GamesController < ApplicationController
 
   def merge_done
     g = Game.find(params[:id])
-    g.merge
+    g.result = g.merge
     g.save
     render_json(g)
   end
@@ -97,20 +100,12 @@ private
         h[x] = g.get_price(x)
       }
     }
-    # 筆頭株主
-    h["majors"] = Hash.new.tap{|h|
-      Game::COLORS.each{|x|
-        h[x] = g.majors(x)
-      }
-    }
-    # 第２株主
-    h["minors"] = Hash.new.tap{|h|
-      Game::COLORS.each{|x|
-        h[x] = g.minors(x)
-      }
-    }
+
     h["user_id"] = @user.user_id
     h.delete("tiles")
+
+    h["virtual_tile"] = g.virtual_tile
+    h["shares"] = g.shares
 
     h["end"] = g.end?
     if h["end"]
