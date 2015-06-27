@@ -36,9 +36,10 @@ class GamesController < ApplicationController
 
   def put_tile
     g = Game.find(params[:id])
-    g.result = g.put_tile(params[:name])
+    service = MergeService.new(g)
+    g.result = service.execute(params[:name])
     g.save
-    render_json(g)
+    render_json(g, service.virtual_tile, service.shares)
   end
 
   def build_chain
@@ -78,14 +79,15 @@ class GamesController < ApplicationController
 
   def merge_done
     g = Game.find(params[:id])
-    g.result = g.merge
+    service = MergeService.new(g)
+    g.result = service.merge
     g.save
     render_json(g)
   end
 
 private
 
-  def render_json(g)
+  def render_json(g, virtual_tile = nil, shares = nil)
     # 自分以外の手持ちタイル情報を消去
     g.users.select{|u|
       u.user_id != @user.user_id
@@ -104,8 +106,8 @@ private
     h["user_id"] = @user.user_id
     h.delete("tiles")
 
-    h["virtual_tile"] = g.virtual_tile
-    h["shares"] = g.shares
+    h["virtual_tile"] = virtual_tile
+    h["shares"] = shares
 
     h["end"] = g.end?
     if h["end"]
