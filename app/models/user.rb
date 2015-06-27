@@ -20,4 +20,14 @@ class User < ActiveRecord::Base
     }
     self.user_id = nil
   end
+
+  def sell(merged)
+    self.stocks[merged] -= 1
+    self.cash += self.game.get_price(merged)
+  end
+
+  def trade(merged, merger)
+    self.stocks[merged] -= 2
+    self.stocks[merger] += 1
+  end
 end

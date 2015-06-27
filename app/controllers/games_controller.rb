@@ -65,15 +65,15 @@ class GamesController < ApplicationController
 
   def sell
     g = Game.find(params[:id])
-    g.sell
-    g.save
+    @user.sell(g.merged)
+    @user.save
     render_json(g)
   end
 
   def trade
     g = Game.find(params[:id])
-    g.trade
-    g.save
+    @user.trade(g.merged, g.merger)
+    @user.save
     render_json(g)
   end
 

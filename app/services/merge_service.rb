@@ -8,7 +8,7 @@ class MergeService
   # 指定したタイルを置く
   # 戻り値：merged, chained, nil
   def execute(name)
-    return "false" unless @game.current_user.tiles.include?(name)
+#    return "false" unless @game.current_user.tiles.include?(name)
 
     @game.name = name
     @game.placed_tiles[name] = "gray"

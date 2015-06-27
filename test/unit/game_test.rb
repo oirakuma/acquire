@@ -1,18 +1,6 @@
 require 'test_helper'
 
 class GameTest < ActiveSupport::TestCase
-  def setup
-    @game = Game.new
-    @game.save
-
-    @user = User.create
-    @game.add_user @user
-    @game.add_user User.create
-    @game.save
-
-    assert_equal 2, @game.users.size
-  end
-
   def test_reset
     @game.reset
     assert_equal 0, @game.users.size
@@ -71,28 +59,6 @@ class GameTest < ActiveSupport::TestCase
     assert @game.placed_tiles["2A"] == "red"
   end
 
-  def test_sell
-    setup_tiles
-    @game.merged = "red"
-    @game.merger = "blue"
-    red = @game.current_user.stocks["red"]
-    cash = @game.current_user.cash
-    @game.sell
-    assert_equal red-1, @game.current_user.stocks["red"]
-    assert_equal cash+200, @game.current_user.cash
-  end
-
-  def test_trade
-    setup_tiles
-    @game.merged = "red"
-    @game.merger = "blue"
-    red = @game.current_user.stocks["red"]
-    blue = @game.current_user.stocks["blue"]
-    @game.trade
-    assert_equal red-2, @game.current_user.stocks["red"]
-    assert_equal blue+1, @game.current_user.stocks["blue"]
-  end
-
   def test_end
     assert_equal false, @game.end?
 
@@ -128,15 +94,5 @@ class GameTest < ActiveSupport::TestCase
   def test_hotel_chain
     @game.placed_tiles["1A"] = "red"
     assert_not_equal false, @game.hotel_chain?("1A")
-  end
-
-private
-
-  def setup_tiles
-    @game.placed_tiles["1A"] = "red"
-    @game.placed_tiles["2A"] = "red"
-    @game.placed_tiles["4A"] = "blue"
-    @game.placed_tiles["5A"] = "blue"
-    @game.placed_tiles["6A"] = "blue"
   end
 end

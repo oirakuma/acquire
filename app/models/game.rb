@@ -74,20 +74,6 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def sell
-    u = current_user
-    u.stocks[self.merged] -= 1
-    u.cash += get_price(self.merged)
-    u.save
-  end
-
-  def trade
-    u = current_user
-    u.stocks[self.merged] -= 2
-    u.stocks[self.merger] += 1
-    u.save
-  end
-
   def end?
     # 41を越えるホテルチェーンができていたらゲーム終了
     return true if self.chain_markers.select{|k,v|v}.any?{|k,v|
