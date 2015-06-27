@@ -42,7 +42,7 @@ class Game < ActiveRecord::Base
   end
 
   def put_tile(name)
-    return "false" unless current_user.tiles.include?(name)
+#    return "false" unless current_user.tiles.include?(name)
 
     self.placed_tiles[name] = "gray"
 
@@ -50,10 +50,7 @@ class Game < ActiveRecord::Base
       h = get_majors(self.merged)
       price = get_price(self.merged)
       if h["majors"]
-        @shares = share_to_stockholders(h["majors"], price*15, price*10, {})
-      end
-      if h["minors"]
-        @shares = share_to_stockholders(h["minors"], price*5, price*5, @shares)
+        @shares = share_to_stockholders(h, "majors", price*15, price*10, {})
       end
       return "merged"
     end
@@ -182,7 +179,7 @@ class Game < ActiveRecord::Base
       second_value = values.max
       h["minors"] = self.users.select{|u|
         u.stocks[color] == second_value
-      } if second_value > 0
+      } if second_value && second_value > 0
     }
   end
 
@@ -214,22 +211,24 @@ class Game < ActiveRecord::Base
 
 private
 
-  def share_to_stockholders(users, amount1, amount2, h)
-    if users.size == 0
+  def share_to_stockholders(h, type, amount1, amount2, res)
+    users = h[type]
+    if !users || users.size == 0
       nil
     elsif users.size >= 2
       users.each{|u|
-        h[u.name] = amount1/users.size
+        res[u.name] = amount1/users.size
         u.cash += amount1/users.size
         u.save
       }
     else
       u = users.first
-      h[u.name] = amount2
+      res[u.name] = amount2
       u.cash += amount2
       u.save
+      res = share_to_stockholders(h, "minors", amount2/2, amount2/2, res) if type == "majors"
     end
-    h
+    res
   end
 
   def get_price_by_size(size)
