@@ -2,21 +2,16 @@ var MergedView = Backbone.View.extend({
   el: "#merged",
   render: function() {
     var self = this;
- 
-    var a = createButton().text("Sell");
-    a.css("background-color", this.model.get("merged"));
-    a.click(function(){
-      self.model.ajax("sell", "POST");
-    });
-    $(this.el).append(a);
 
-    var a = createButton().text("Trade");
-    a.css("background-color", this.model.get("merged"));
-    a.click(function(){
-      self.model.ajax("trade", "POST");
+    [["売却","sell"], ["交換","trade"]].map(function(x){
+      var a = createButton().text(x[0]);
+      a.css("background-color", self.model.get("merged"));
+      a.click(function(){
+        self.model.ajax(x[1], "POST");
+      });
+      $(self.el).append(a);
     });
-    $(this.el).append(a);
- 
+
     var a = createButton().text("Done");
     $(this.el).append(a);
     return new Promise(function(resolve){
