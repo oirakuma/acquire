@@ -84,7 +84,7 @@ class Game < ActiveRecord::Base
   def trade
     u = current_user
     u.stocks[self.merged] -= 2
-    u.stocks[self.merger] += 2
+    u.stocks[self.merger] += 1
     u.save
   end
 

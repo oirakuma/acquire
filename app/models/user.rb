@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 
   before_create do
     reset
-    self.name = "user-#{self.session_id[10,4]}"
+    self.name = "user-#{self.session_id[10,4]}" rescue nil
   end
 
   def reset
