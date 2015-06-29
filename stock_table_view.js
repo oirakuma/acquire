@@ -1,30 +1,30 @@
-(function(global){
-  global.StockTableView = StockTableView;
+var StockTableView = Backbone.View.extend({
+  el: "#stocks",
 
-  function StockTableView(option) {
-    this.model = option.model;
-    this.id = option.id;
-  }
+  initialize: function() {
+    console.log("OK");
+    this.model.bind("change", this.render, this);
+  },
 
   //株券の価格
-  StockTableView.prototype.createStockPrices = function() {
+  createStockPrices: function() {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>$'+this.model.price(colors[p])+'</td>');
     }
     return tr;
-  }
+  },
 
   //ホテルチェーンのサイズ
-  StockTableView.prototype.createChainSizes = function() {
+  createChainSizes: function() {
     var tr = $('<tr><td></td><td></td></tr>');
     for (var p in colors) {
       tr.append('<td>'+this.model.board.getHotelChainSize(colors[p])+'</td>');
     }
     return tr;
-  }
+  },
 
-  StockTableView.prototype.render = function() {
+  render: function() {
     var self = this;
 
     //筆頭株主と第２株主をマークする
@@ -81,7 +81,7 @@
     table.append(this.createChainSizes());
     table.append(this.createStockPrices());
 
-    $(this.id).html(table);
+    this.$el.html(table);
     return table;
   }
-})(this.self);
+});
