@@ -1,47 +1,35 @@
-(function(global){
-  global.TilesView = TilesView;
+var TilesView = Backbone.View.extend({
+  el: "#tiles",
 
-  function TilesView(option) {
-    this.model = option.model;
-    this.id = option.id;
-  }
+  events: {
+    "click td": "putTile"
+  },
 
-  TilesView.prototype.start = function() {
+  putTile: function(e) {
+    this.name = $(e.target).text();
+    if (!_.contains(this.model.players[0].tiles, this.name)) return;
+    if (this.model.canPut(0, this.name)) {
+      $("#chain-markers").html("");
+      var action = new Action(this.model);
+      action.start(0, this);
+    }
+  },
+
+  start: function() {
     $("#chain-markers").html("<h3>Your turn.</h3>");
-  }
+  },
 
-  TilesView.prototype.selectHotelChainColor = function() {
+  selectHotelChainColor: function() {
     var view = new ChainMarkersView({model:this.model,el:"#chain-markers"});
     return view.render();
-  }
+  },
 
-  TilesView.prototype.getMove = function(id) {
+  getMove: function(id) {
     return this.name;
-  }
-
-  TilesView.prototype.createTile = function(name) {
-    var self = this;
-    var td = $('<td></td>').addClass(name).text(name);
-    var myTile = false;
-    this.model.players[0].tiles.map(function(t){
-      if (t == name)
-        myTile = true;
-    });
-    if (myTile) {
-      td.click(function(){
-        self.name = $(this).text();
-        if (self.model.canPut(0, self.name)) {
-          $("#chain-markers").html("");
-          var action = new Action(self.model);
-          action.start(0, self);
-        }
-      });
-    }
-    return td;
-  }
+  },
 
   //購入フェーズ
-  TilesView.prototype.purchasePhase = function(id) {
+  purchasePhase: function(id) {
     var self = this;
 
     function next() {
@@ -70,14 +58,17 @@
     } else {
       next();
     }
-  }
+  },
 
-  TilesView.prototype.render = function() {
+  render: function() {
     var table = $("<table></table>").attr("cellspacing",1);
     for (var i = 0; i < 9; i++) {
       var tr = $("<tr></tr>");
-      for (var j = 0; j < 12; j++)
-        tr.append(this.createTile((j+1)+chars[i]));
+      for (var j = 0; j < 12; j++) {
+        var name = (j+1)+chars[i];
+        var td = $('<td></td>').addClass(name).text(name);
+        tr.append(td);
+      }
       table.append(tr);
     }
 
@@ -94,6 +85,6 @@
       var name = this.model.players[0].tiles[i];
       table.find("."+name).css("color", "orange").css("font-weight", "bold");
     }
-    $(this.id).html(table);
+    this.$el.html(table);
   }
-})(this.self);
+});
