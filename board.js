@@ -116,19 +116,6 @@
     }
   }
 
-  Board.prototype.getStockholders = function(color) {
-    var h = {};
-    console.log(color);
-    for (var i = 0; i < this.players.length; i++) {
-      console.log(this.players[i].stocks);
-      h[i] = this.players[i].stocks[color];
-    }
-    console.log(h);
-    return sortHashByValue(h).map(function(x){
-      return x[0];
-    });
-  }
-
   Board.prototype.getHotelChainSize = function(color) {
     var count = 0;
     for (var p in this.tiles) {
@@ -173,7 +160,6 @@
         count++;
       }
     });
-    console.log(colors);
     return (colors["gray"] && count == 1);
   }
 })(this.self);
