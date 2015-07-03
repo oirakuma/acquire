@@ -25,7 +25,11 @@
 
     //1) 吸収合併が発生
     if (this.model.board.isHotelMerged(name)) {
-      this.model.shareToStockholders();
+//      this.model.shareToStockholders();
+      var shares = this.model.getShares(this.model.board.merged)
+      console.log("shares", shares);
+      for (var p in shares)
+        this.model.players[p].cash += shares[p];
       this.mergedOption().then(function(){
         ai.model.merge();
         ai.purchasePhase(id);

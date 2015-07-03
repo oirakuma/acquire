@@ -7,7 +7,7 @@ var TilesView = Backbone.View.extend({
 
   putTile: function(e) {
     this.name = $(e.target).text();
-    if (!_.contains(this.model.players[0].tiles, this.name)) return;
+//    if (!_.contains(this.model.players[0].tiles, this.name)) return;
     if (this.model.canPut(0, this.name)) {
       $("#chain-markers").html("");
       var action = new Action(this.model);

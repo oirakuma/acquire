@@ -4,12 +4,24 @@ var colors = ["red","yellow","orange","green","blue","purple","cyan"];
 //model
 var chainMarkers = {};
 
-function Player() {
+function Player(uid) {
   this.cash = 6000;
   this.stocks = {};
   this.tiles = [];
+  this.uid = uid;
   for (var p in colors)
     this.stocks[colors[p]] = 0;
+}
+
+function deleteFromArray(a, x) {
+  for (var i = 0; i < a.length; i++)
+    if (a[i] == x)
+      a.splice(i, 1);
+}
+
+function merge(h, h2) {
+  for (var p in h2)
+    h[p] = h2[p];
 }
 
 function createTiles() {
@@ -40,7 +52,7 @@ var Acquire = Backbone.Model.extend({
     //players
     this.players = [];
     for (var i = 0; i < 4; i++)
-      this.players[i] = new Player();
+      this.players[i] = new Player(i);
     for (var i = 0; i < 6; i++) {
       for (var j = 0; j < this.players.length; j++)
         this.players[j].tiles.push(this.getTile());
@@ -78,7 +90,6 @@ var Acquire = Backbone.Model.extend({
 
   price: function(color) {
     var size = this.board.getHotelChainSize(color)
-    console.log(size);
     if (color == "red" || color == "yellow") {
       if (size == 0) return 0;
       else if (size == 2) return 200;
@@ -115,63 +126,56 @@ var Acquire = Backbone.Model.extend({
     }
   },
   
-  getShare: function(color) {
-    return 10*this.price(color);
-  },
-
   getStockholders: function(color) {
+    var values = this.players.map(function(u){
+      return u.stocks[color];
+    });
+
+    var maxValue = Math.max.apply(null, values);
     var h = {};
-    console.log(color);
-    for (var i = 0; i < this.players.length; i++) {
-      console.log(this.players[i].stocks);
-      var x = this.players[i].stocks[color];
-      if (x > 0)
-        h[i] = x;
+    if (maxValue > 0) {
+      h["majors"] = this.players.filter(function(u){
+        return u.stocks[color] == maxValue;
+      }).map(function(u){
+        return u.uid;
+      });
     }
-    console.log(h);
-    return sortHashByValue(h);
+
+    deleteFromArray(values, maxValue);
+    var secondValue = Math.max.apply(null, values);
+    if (secondValue > 0) {
+      h["minors"] = this.players.filter(function(u){
+        return u.stocks[color] == secondValue;
+      }).map(function(u){
+        return u.uid;
+      });
+    }
+    return h;
   },
 
-  shareToStockholders: function() {
-    //株主への配当
-    var major = this.getShare(this.board.merged);
-    var minor = major/2;
+  getShares: function(color) {
+    var price = this.price(color);
+    return this.getShares2("majors", color, 15*price, 10*price);
+  },
 
-    var a = this.getStockholders(this.board.merged);
-    console.log("stockholders", a);
-
-    var self = this;
-    function share(id, value) {
-      self.players[id].cash += value;
-      logView.append(id, 'was shared '+value+'.');
-    }
- 
-    if (a.length == 0) {
-      ;
-    } else if (a.length == 1) {
-      this.players[a[0][0]].cash += major;
+  getShares2: function(type, color, amount1, amount2) {
+    var a = this.getStockholders(color)[type];
+    var h = {};
+    if (!a || a.length == 0) {
+      null; 
+    } else if (a.length >= 2) {
+      a.map(function(id){
+        h[id] = amount1/a.length
+      });
     } else {
-      //筆頭株主が2人
-      if (a[0][1] == a[1][1]) {
-        share(a[0][0], (major+minor)/2);
-        share(a[1][0], (major+minor)/2);
-      } else {
-        //第２株主が2人
-        if (a.length >= 3 && a[1][1] == a[2][1]) {
-          share(a[0][0], major);
-          share(a[1][0], minor/2);
-          share(a[2][0], minor/2);
-        //通常
-        } else {
-          share(a[0][0], major);
-          share(a[1][0], minor);
-        }
+      var id = a[0];
+      h[id] = amount2;
+      if (type == "majors") {
+        var h2 = this.getShares2("minors", color, amount2/2, amount2/2);
+        merge(h, h2);
       }
     }
-
-    setTimeout(function(){
-      stockTableView.render();
-    }, 0);
+    return h;
   },
 
   merge: function() {

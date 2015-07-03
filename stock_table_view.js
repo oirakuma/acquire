@@ -2,7 +2,6 @@ var StockTableView = Backbone.View.extend({
   el: "#stocks",
 
   initialize: function() {
-    console.log("OK");
     this.model.bind("change", this.render, this);
   },
 
